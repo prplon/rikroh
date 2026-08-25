@@ -1,0 +1,2557 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Röhr</title>
+<meta name="description" content="Product design portfolio — Rebl, Opera, Volvo.">
+<meta name="theme-color" content="#05060a">
+<link rel="preconnect" href="https://unpkg.com" crossorigin="anonymous">
+<link rel="preload" href="uploads/Archivo-Bold.ttf" as="font" type="font/ttf" crossorigin="anonymous">
+<link rel="preload" href="uploads/Archivo-Regular.ttf" as="font" type="font/ttf" crossorigin="anonymous">
+<link rel="preload" href="https://unpkg.com/react@18.3.1/umd/react.production.min.js" as="script" crossorigin="anonymous">
+<link rel="preload" href="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" as="script" crossorigin="anonymous">
+<style>
+  /* Loader-critical, so the overlay's first frame is final: the wordmark's face, and
+     the raw template hidden without waiting on app.js (which is why it can defer). */
+  @font-face { font-family:'Archivo'; src:url('uploads/Archivo-Regular.ttf') format('truetype'); font-weight:400; font-style:normal; font-display:swap; }
+  @font-face { font-family:'Archivo'; src:url('uploads/Archivo-Bold.ttf') format('truetype'); font-weight:700; font-style:normal; font-display:swap; }
+  x-dc { display:none !important; }
+  html, body { margin:0; padding:0; background:#05060a; }
+</style>
+<script defer src="./app.js"></script>
+</head>
+<body>
+<div id="pre" style="position:fixed; inset:0; z-index:9999; background:#05060a; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; font-family:'Archivo',Helvetica,Arial,sans-serif">
+  <div style="position:relative; transform:skewX(-7deg); font-weight:700; font-size:clamp(62px,15vw,210px); line-height:.82; letter-spacing:-.045em; text-transform:uppercase; white-space:nowrap">
+    <div style="color:rgba(246,245,242,.18)">RÖHR</div>
+    <div id="preFill" style="position:absolute; inset:0; color:#f6f5f2; clip-path:inset(-30% 100% -30% -5%)">RÖHR</div>
+  </div>
+  <div style="width:min(50vw,240px); height:2px; background:rgba(246,245,242,.18)">
+    <div id="preBar" style="width:0%; height:100%; background:#f6f5f2"></div>
+  </div>
+  <div id="prePct" style="font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:rgba(246,245,242,.55)">0%</div>
+</div>
+<script>(function(){
+  var pct=0,target=8;
+  var fill=document.getElementById('preFill'),bar=document.getElementById('preBar'),num=document.getElementById('prePct'),pre=document.getElementById('pre');
+  // Pick the session hue here, before first paint, so the loader and the blob field
+  // agree on it. The component reads it back off window instead of rolling its own.
+  var HUE=Math.floor(Math.random()*360);
+  window.__rohrHue=HUE;
+  // The blobs are a fixed pastel gradient with hue-rotate() over it, NOT hsl(HUE,...),
+  // so match them the same way: same base stop, same filter.
+  var ROT='hue-rotate('+HUE+'deg)';
+  if(fill){fill.style.color='#7fd9ff';fill.style.filter=ROT;}
+  if(bar){bar.style.background='#7fd9ff';bar.style.filter=ROT;}
+  if(num){num.style.color='#7fd9ff';num.style.filter=ROT;}
+  function set(p){if(fill)fill.style.clipPath='inset(-30% '+(100-p)+'% -30% -5%)';if(bar)bar.style.width=p+'%';if(num)num.textContent=Math.round(p)+'%';}
+  // Release on real signals: fonts, plus the above-the-fold (non-lazy) images. Lazy
+  // gallery images are excluded on purpose — waiting on them holds the overlay open.
+  var fontsOK=false;
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){fontsOK=true;});else fontsOK=true;
+  var t0=performance.now(),prev=t0,held=0,bootAt=0;
+  function frame(now){
+    var dt=Math.min(64,now-prev);prev=now;
+    var cv=document.querySelector('x-dc canvas');
+    // draw() sets __rohrPainted once the pixel loop has warmed up (10 frames). The
+    // canvas-width probe is only a late fallback for when the element isn't reachable by
+    // this selector — it must NOT fire early, or it releases the overlay on frame 1 again.
+    var booted=window.__rohrPainted===true||(now-t0>2600&&cv&&cv.width!==300);
+    var imgsOK=false;
+    if(booted){
+      if(!bootAt)bootAt=now;
+      var im=document.querySelectorAll('x-dc img:not([loading="lazy"])');
+      imgsOK=true;
+      for(var i=0;i<im.length;i++){if(!im[i].complete){imgsOK=false;break;}}
+      // never let one slow above-fold image hold the overlay open
+      if(now-bootAt>1400)imgsOK=true;
+    }
+    if(booted&&fontsOK&&imgsOK)target=100;
+    else if(booted&&fontsOK)target=95;
+    else if(booted)target=88;
+    else if(window.ReactDOM)target=78;
+    else if(window.React)target=62;
+    else target=Math.min(40,target+dt/80);
+    pct+=(target-pct)*(1-Math.pow(1-0.12,dt/80));
+    if(Math.abs(target-pct)<0.3)pct=target;
+    set(pct);
+    // hold a beat at 100 so it's actually seen instead of fading the instant it lands
+    if(pct>=100){
+      if(!held)set(100);
+      held+=dt;
+      if(held>700){if(pre){pre.style.transition='opacity .35s ease';pre.style.opacity='0';setTimeout(function(){pre.remove();},400);}return;}
+      requestAnimationFrame(frame);return;
+    }
+    if(now-t0<8000)requestAnimationFrame(frame);
+    else if(pre)pre.remove();
+  }
+  requestAnimationFrame(frame);
+})();</script>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://unpkg.com" crossorigin="anonymous" />
+<link rel="dns-prefetch" href="https://unpkg.com" />
+<link rel="preload" href="uploads/Archivo-Bold.ttf" as="font" type="font/ttf" crossorigin="anonymous" />
+<style>
+  @font-face { font-family:'Archivo'; src:url('uploads/Archivo-Regular.ttf') format('truetype'); font-weight:400; font-style:normal; font-display:swap; }
+  @font-face { font-family:'Archivo'; src:url('uploads/Archivo-Medium.ttf') format('truetype'); font-weight:500; font-style:normal; font-display:swap; }
+  @font-face { font-family:'Archivo'; src:url('uploads/Archivo-SemiBold.ttf') format('truetype'); font-weight:600; font-style:normal; font-display:swap; }
+  @font-face { font-family:'Archivo'; src:url('uploads/Archivo-Bold.ttf') format('truetype'); font-weight:700; font-style:normal; font-display:swap; }
+</style>
+<style>
+  html { scroll-behavior:smooth; }
+  @media (max-width:900px){
+    /* no filter here: AA is analytic in draw(), and a CSS filter on the canvas makes
+       WebKit composite it through an intermediate buffer. */
+    [data-chaprow]{ display:grid !important; grid-template-columns:4.5ch 1fr; column-gap:clamp(10px,3vw,16px); row-gap:clamp(10px,1.6vh,16px); }
+    [data-chaprow] > span:first-child{ grid-column:1; grid-row:1; width:auto !important; }
+    [data-chaprow] > h3, [data-chaprow] > h4{ grid-column:2; grid-row:1; }
+    [data-chaprow] > [data-chapbody], [data-chaprow] > p{ grid-column:2; margin-left:0 !important; }
+  }
+  html, body { margin:0; padding:0; background:#f6f5f2; }
+  #about, #work, #contact { scroll-margin-top:clamp(40px,8vh,90px); }
+  body { -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  a { color:#111; text-decoration:none; }
+  a:hover { color:#111; }
+  @keyframes rohrFloat { 0%{transform:translateY(0) rotate(0deg)} 30%{transform:translateY(11px) rotate(.8deg)} 62%{transform:translateY(-7px) rotate(-.7deg)} 100%{transform:translateY(0) rotate(0deg)} }
+  @keyframes rohrFadeUp { from{opacity:0; transform:translate3d(0,34px,0)} to{opacity:1; transform:none} }
+  @keyframes rohrFloaty { 0%{transform:translate3d(0,0,0) scale(1.02)} 50%{transform:translate3d(0,-16px,0) scale(1.05)} 100%{transform:translate3d(0,0,0) scale(1.02)} }
+  @keyframes rohrOil { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+  @keyframes rohrTintPulse { 0%{inset:0; opacity:.75} 11%{inset:-19px; opacity:0} 100%{inset:-19px; opacity:0} }
+  @keyframes rohrCheers { 0%{transform:rotate(3deg) translateY(0) scale(1)} 16%{transform:rotate(-19deg) translateY(-7%) scale(1.16); animation-timing-function:cubic-bezier(.16,.9,.2,1)} 100%{transform:rotate(3deg) translateY(0) scale(1)} }
+  @keyframes rohrDrop { 0%{opacity:0; transform:translate(0,0) scale(.5); animation-timing-function:cubic-bezier(.1,.8,.5,1)} 8%{opacity:1} 42%{transform:translate(calc(var(--dx) * .55), var(--dy)) scale(1); animation-timing-function:cubic-bezier(.5,0,.9,.6)} 88%{opacity:1} 100%{opacity:0; transform:translate(var(--dx), var(--fy)) scale(.72)} }
+  @keyframes rohrCopySwap { 0%{opacity:0; transform:skewX(-7deg) translateY(14px)} 100%{opacity:1; transform:skewX(-7deg) translateY(0)} }
+  @keyframes rohrShake { 0%,86%,100%{transform:translate(0,0) rotate(0deg)} 88%{transform:translate(-5.4px,1.8px) rotate(-2.6deg)} 90%{transform:translate(5.4px,-1.8px) rotate(2.6deg)} 92%{transform:translate(-3.6px,-1.8px) rotate(-1.8deg)} 94%{transform:translate(3.6px,1.8px) rotate(1.44deg)} 96%{transform:translate(-1.8px,0) rotate(-.72deg)} }
+  @keyframes rohrCueBob { 0%,58%,100%{transform:translateY(0); opacity:.85} 22%{transform:translateY(5px); opacity:1} 40%{transform:translateY(1.5px); opacity:.95} }
+  @keyframes rohrCueWord { 0%,58%,100%{transform:translateY(0); opacity:.8} 22%{transform:translateY(2px); opacity:1} 40%{transform:translateY(.5px); opacity:.9} }
+  @keyframes rohrMugShake { 0%,84%,100%{transform:translate(0,0) rotate(3deg)} 86%{transform:translate(-5px,2px) rotate(-.2deg)} 88%{transform:translate(5px,-2px) rotate(6deg)} 90%{transform:translate(-3.5px,-2px) rotate(.8deg)} 92%{transform:translate(3.5px,2px) rotate(5deg)} 94%{transform:translate(-2px,0) rotate(2deg)} 96%{transform:translate(1px,0) rotate(3.6deg)} }
+  @keyframes rohrDotWave { 0%,30%{transform:translateY(0)} 36%{transform:translateY(-30%)} 38%,63%{transform:translateY(-24%)} 69%{transform:translateY(-56%)} 71%,96%{transform:translateY(-48%)} 100%{transform:translateY(0)} }
+  @keyframes rohrSteam { 0%{opacity:0; transform:translateY(10%) scaleX(.82) rotate(-2deg); filter:blur(9px)} 16%{opacity:.85} 55%{opacity:.6; transform:translateY(-34%) scaleX(1.12) rotate(3deg); filter:blur(14px)} 100%{opacity:0; transform:translateY(-78%) scaleX(1.42) rotate(-3deg); filter:blur(22px)} }
+  @keyframes rohrTintFlash { 0%{opacity:0} 2%{opacity:.95} 7%{opacity:0} 8.5%{opacity:.7} 13%{opacity:0} 100%{opacity:0} }
+  @keyframes rohrTintFloat { 0%{translate:0 0} 25%{translate:3px -5px} 50%{translate:-2px 3px} 75%{translate:4px 2px} 100%{translate:0 0} }
+  @keyframes rohrTintBreath { 0%{inset:0} 2.4%{inset:-4px} 6.5%{inset:0} 9%{inset:-2px} 13%{inset:0} 100%{inset:0} }
+</style>
+</helmet>
+<div style="position:relative; z-index:0; isolation:isolate; width:100%; min-height:100svh; background:#05060a; overflow:hidden; font-family:'Archivo', Helvetica, Arial, sans-serif;">
+
+  <div style="position:absolute; inset:-12% -6%; z-index:0; background:#05060a; will-change:transform; transform:translate3d(0,0,0)" ref="{{ fieldRef }}">
+    <canvas data-goo="" ref="{{ canvasRef }}" style="width:100%; height:100%; display:block"></canvas>
+  </div>
+
+  <div data-oil="mult" ref="{{ oil1Ref }}" style="position:absolute; inset:0; z-index:4; mix-blend-mode:multiply; pointer-events:none; background:linear-gradient(112deg,#f2ffe4,#a8f5e2 16%,#7fd9ff 34%,#8b8cf7 54%,#b276f0 72%,#e3d2ff 88%,#a8f5e2); background-size:118% 118%; animation:rohrOil 22s ease-in-out infinite"></div>
+  <div data-oil="over" ref="{{ oil2Ref }}" style="position:absolute; inset:0; z-index:5; mix-blend-mode:overlay; opacity:.45; pointer-events:none; background:linear-gradient(28deg,#7fd9ff,#e3d2ff 22%,#f2ffe4 44%,#8b8cf7 66%,#b276f0 88%,#7fd9ff); background-size:135% 135%; animation:rohrOil 34s ease-in-out infinite reverse"></div>
+
+  <div style="position:absolute; inset:0; z-index:3; mix-blend-mode:difference; pointer-events:none; display:flex; flex-direction:column; justify-content:space-between; padding:clamp(16px,3.2vw,40px)">
+    <div style="display:flex; justify-content:space-between; gap:16px; font-size:clamp(9px,1vw,12px); letter-spacing:.16em; text-transform:uppercase; color:#fff; pointer-events:auto">
+      <span>Röhr</span>
+      <span style="display:flex; gap:clamp(12px,2.4vw,32px)">
+        <a href="#about" style="color:#fff; text-decoration:none; padding:3px 7px; margin:-3px -7px; border-radius:2px; transition:background .16s ease, color .16s ease, transform .12s cubic-bezier(.2,.8,.2,1)" style-hover="background:#fff; color:#000" style-active="background:#fff; color:#000; transform:scale(.93)">About</a><a href="#work" style="color:#fff; text-decoration:none; padding:3px 7px; margin:-3px -7px; border-radius:2px; transition:background .16s ease, color .16s ease, transform .12s cubic-bezier(.2,.8,.2,1)" style-hover="background:#fff; color:#000" style-active="background:#fff; color:#000; transform:scale(.93)">Work</a><a href="#contact" style="color:#fff; text-decoration:none; padding:3px 7px; margin:-3px -7px; border-radius:2px; transition:background .16s ease, color .16s ease, transform .12s cubic-bezier(.2,.8,.2,1)" style-hover="background:#fff; color:#000" style-active="background:#fff; color:#000; transform:scale(.93)">Contact</a>
+      </span>
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:16px; font-size:clamp(9px,1vw,12px); letter-spacing:.16em; text-transform:uppercase; color:#fff">
+            <span ref="{{ pickCopyRef }}" onPointerDown="{{ onPickDown }}" onClick="{{ onPickCopy }}" style="max-width:20ch; line-height:1.6; cursor:pointer; pointer-events:auto; touch-action:manipulation; padding:8px 10px; margin:-8px -10px">Pick your<br />favourite<br />colour</span>
+      <a ref="{{ scrollCueRef }}" href="#about" onPointerDown="{{ onCueDown }}" onClick="{{ onCueClick }}" style="display:inline-flex; align-items:center; gap:6px; color:#fff; text-decoration:none; padding:3px 7px; margin:-3px -7px; border-radius:2px; letter-spacing:.16em; touch-action:manipulation; pointer-events:auto; position:relative; z-index:6; padding:10px 12px; margin:-10px -12px; will-change:transform"><span style="display:inline-block; animation:rohrCueWord 1.9s cubic-bezier(.4,0,.5,1) infinite">Scroll</span> <span aria-hidden="true" style="display:inline-block; animation:rohrCueBob 1.9s cubic-bezier(.4,0,.5,1) infinite">↓</span></a>
+    </div>
+  </div>
+
+
+
+  <sc-if value="{{ tintOpen }}" hint-placeholder-val="{{ false }}">
+    <div ref="{{ capWrapRef }}" style="position:absolute; top:calc(clamp(16px,3.2vw,40px) + 64px); left:calc(clamp(16px,3.2vw,40px) + 40px); width:min(52vw,240px); max-width:calc(100vw - 76px); mix-blend-mode:difference; pointer-events:none">
+      <p ref="{{ capTxtRef }}" style="margin:0; font-size:clamp(9px,1vw,12px); letter-spacing:.16em; line-height:1.6; text-transform:uppercase; color:#fff; text-wrap:normal">I used to have a lava lamp as a kid, so this is more than a fancy design blob thingy to me. Mine was orange, but pick your favourite colour.</p>
+    </div>
+  </sc-if>
+
+  <div ref="{{ wordRef }}" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; mix-blend-mode:difference; pointer-events:none; will-change:transform">
+    <div ref="{{ wordTxtRef }}" style="display:flex; align-items:baseline; transform:skewX(-7deg); color:#fff; font-family:'Archivo', Helvetica, Arial, sans-serif; font-weight:700; font-size:clamp(62px,15vw,210px); line-height:.82; letter-spacing:-.045em; text-transform:uppercase; white-space:nowrap">
+      <span style="animation:rohrFloat 7.4s ease-in-out infinite .9s">R</span><span style="animation:rohrFloat 5.5s ease-in-out infinite">Ö</span><span style="animation:rohrFloat 6.5s ease-in-out infinite .4s">H</span><span style="animation:rohrFloat 8.1s ease-in-out infinite 1.3s">R</span>
+    </div>
+  </div>
+
+  <div ref="{{ tintWrapRef }}" style="position:absolute; top:calc(clamp(16px,3.2vw,40px) + 30px); left:clamp(16px,3.2vw,40px); width:26px; height:26px; z-index:6">
+    <button type="button" ref="{{ dotRef }}" onPointerDown="{{ onDotDown }}" aria-label="Change lava colour" style="position:absolute; inset:0; z-index:20; isolation:isolate; padding:0; border:0; cursor:grab; touch-action:none; border-radius:50%; box-shadow:0 0 0 1.5px rgba(246,245,242,.6); background:linear-gradient(90deg,#5b6bff,#c46bff 14%,#ff5f6d 28%,#ffa14a 42%,#ffe94a 56%,#6ef07f 72%,#3ad1ff 86%,#5b6bff)"></button>
+    <sc-if value="{{ tintOpen }}" hint-placeholder-val="{{ false }}">
+      <div ref="{{ trackRef }}" onPointerDown="{{ onTintDown }}" style="position:absolute; z-index:6; left:36px; top:7px; width:min(52vw,240px); max-width:calc(100vw - 76px); height:8px; border-radius:4px; cursor:ew-resize; touch-action:none; background:linear-gradient(90deg,#5b6bff,#c46bff 14%,#ff5f6d 28%,#ffa14a 42%,#ffe94a 56%,#6ef07f 72%,#3ad1ff 86%,#5b6bff)">
+        <div ref="{{ knobRef }}" style="position:absolute; top:-5px; left:0; width:3px; height:18px; margin-left:-1.5px; border-radius:2px; background:#fff; pointer-events:none"></div>
+        <div aria-hidden="true" style="position:absolute; top:-18px; right:-14px; bottom:-18px; left:-8px; z-index:-1"></div>
+      </div>
+    </sc-if>
+  </div>
+
+
+
+</div>
+<div style="position:relative; z-index:4; background:#0b0b0b; color:#f6f5f2; min-height:100svh; font-family:'Archivo', Helvetica, Arial, sans-serif; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))">
+  <div style="display:flex; flex-direction:column; gap:clamp(28px,5vh,56px); padding:clamp(40px,8vh,96px) clamp(20px,5vw,80px) clamp(40px,8vh,80px); min-width:0">
+    <span style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.45" id="about">01. About</span>
+    <div ref="{{ helloRef }}" style="display:flex; flex-direction:column; animation:rohrFadeUp .9s cubic-bezier(.2,.7,.2,1) both; animation-timeline:view(); animation-range:entry 8% cover 26%">
+      <h2 style="margin:0; font-family:'Archivo', Helvetica, Arial, sans-serif; font-weight:700; font-size:clamp(40px,5.6vw,78px); line-height:1; letter-spacing:-.03em; text-transform:uppercase; transform:skewX(-7deg)">Hello! I am</h2>
+      <h2 style="margin:0; font-family:'Archivo', Helvetica, Arial, sans-serif; font-weight:700; font-size:clamp(24px,3.2vw,44px); line-height:1.1; letter-spacing:-.02em; text-transform:uppercase; color:#5b6bff; transform:skewX(-7deg)" ref="{{ accent5Ref }}">Rikard Röhr</h2>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; gap:clamp(24px,3vw,48px); margin-top:auto">
+      <p style="flex:1 1 auto; min-width:min(100%,260px); margin:0; font-size:clamp(14px,1.4vw,16px); line-height:1.7; text-wrap:pretty; opacity:.86">I have been in the digital design industry for a long time, long enough to have seen a few trends come and go, and to have cultivated expertise across Digital Product Design, UX and Art Direction in agencies as well as tech companies.</p>
+      <p style="flex:1 1 auto; min-width:min(100%,260px); margin:0; font-size:clamp(14px,1.4vw,16px); line-height:1.7; text-wrap:pretty; opacity:.86">My primary focus lies in Design and UX but I also have experience in C# programming in Unity, which not only enhances my understanding but also enables effective communication with developers.</p>
+    </div>
+    <div style="border-top:1px solid rgba(246,245,242,.22); padding-top:clamp(20px,3vh,32px); display:flex; flex-wrap:wrap; gap:clamp(20px,3vw,44px)">
+      <a href="https://www.linkedin.com/in/rikardrohr/" target="_blank" rel="noopener" style="display:flex; align-items:center; gap:10px; color:#f6f5f2; font-size:clamp(11px,1vw,13px); letter-spacing:.1em; text-transform:uppercase; line-height:1">
+        <img src="uploads/linkedin.webp" alt="" style="width:20px; height:20px; object-fit:contain; display:block; flex:none" />
+        <span style="line-height:1; display:block; transition:color .25s ease" style-hover="color:#c9f6ff">Connect</span>
+      </a>
+    </div>
+  </div>
+  <div ref="{{ portraitWrapRef }}" style="position:relative; z-index:6; isolation:isolate; min-height:min(70svh,620px); background:#111; contain:paint">
+    <img ref="{{ portraitRef }}" src="uploads/portrait.webp" alt="Rikard Röhr" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:grayscale(1) contrast(1.05)" />
+
+  </div>
+</div>
+
+<div style="position:relative; z-index:4; background:#0b0b0b; color:#f6f5f2; font-family:'Archivo', Helvetica, Arial, sans-serif; padding:clamp(40px,9vh,110px) clamp(20px,5vw,80px) clamp(56px,12vh,140px); display:flex; flex-direction:column; gap:clamp(40px,7vh,88px)">
+  <div style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:16px; align-items:baseline">
+    <span style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.45">02. How I work</span>
+    <span style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.45">Mindset / Process / Tools</span>
+  </div>
+
+  <div style="display:flex; flex-direction:column">
+    <div data-chaprow="" style="display:flex; flex-wrap:wrap; gap:clamp(14px,3vw,48px); align-items:start; padding:clamp(24px,4vh,44px) 0; border-top:1px solid rgba(246,245,242,.18)">
+      <span style="flex:0 0 auto; width:5ch; font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; opacity:.4; padding-top:.6em">A</span>
+      <h3 style="flex:1 1 200px; min-width:0; overflow-wrap:anywhere; margin:0; font-weight:700; font-size:clamp(19px,3vw,42px); line-height:1; letter-spacing:-.02em; text-transform:uppercase; transform:skewX(-7deg)">Mindset</h3>
+      <div data-chapbody="" style="flex:2 1 300px; min-width:0; display:flex; flex-direction:column; gap:clamp(12px,1.6vh,18px)">
+      <p style="margin:0; font-size:clamp(14px,1.4vw,17px); line-height:1.7; text-wrap:pretty; opacity:.86">I design digital experiences with a <strong style="font-weight:700">holistic approach</strong>, ensuring accessibility, ease of use and minimalistic design. I prioritise user feedback and testing to refine my work. The best interfaces are the ones that are simply there, doing their job, letting you get on with yours and only asking for attention when it is actually needed.</p>
+      <p style="margin:0; font-size:clamp(14px,1.4vw,17px); line-height:1.7; text-wrap:pretty; opacity:.86">I like to get hands on early, building and testing rough ideas rather than keeping them in a continuous discussion without testing.</p>
+      </div>
+    </div>
+    <div data-chaprow="" style="display:flex; flex-wrap:wrap; gap:clamp(14px,3vw,48px); align-items:start; padding:clamp(24px,4vh,44px) 0; border-top:1px solid rgba(246,245,242,.18)">
+      <span style="flex:0 0 auto; width:5ch; font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; opacity:.4; padding-top:.6em">B</span>
+      <h3 style="flex:1 1 200px; min-width:0; overflow-wrap:anywhere; margin:0; font-weight:700; font-size:clamp(19px,3vw,42px); line-height:1; letter-spacing:-.02em; text-transform:uppercase; transform:skewX(-7deg)">Embracing<br />change</h3>
+      <p style="flex:2 1 300px; min-width:0; margin:0; font-size:clamp(14px,1.4vw,17px); line-height:1.7; text-wrap:pretty; opacity:.86">In our fast-paced world of technology, I firmly believe in the importance of constant learning and adaptation. <strong style="font-weight:700">Tomorrow's experiences may differ vastly from today's</strong>, and it's essential to stay ahead of the curve. With a curious mindset I thrive on embracing new technologies and ideas, each innovation is an opportunity to expand my skill set and deepen my understanding.</p>
+    </div>
+    <div data-chaprow="" style="display:flex; flex-wrap:wrap; gap:clamp(14px,3vw,48px); align-items:start; padding:clamp(24px,4vh,44px) 0; border-top:1px solid rgba(246,245,242,.18); border-bottom:1px solid rgba(246,245,242,.18)">
+      <span style="flex:0 0 auto; width:5ch; font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; opacity:.4; padding-top:.6em">C</span>
+      <h3 style="flex:1 1 200px; min-width:0; overflow-wrap:anywhere; margin:0; font-weight:700; font-size:clamp(19px,3vw,42px); line-height:1; letter-spacing:-.02em; text-transform:uppercase; transform:skewX(-7deg)">Team first</h3>
+      <div data-chapbody="" style="flex:2 1 300px; min-width:0; display:flex; flex-direction:column; gap:clamp(12px,1.6vh,18px)">
+        <p style="margin:0; font-size:clamp(14px,1.4vw,17px); line-height:1.7; text-wrap:pretty; opacity:.86">When leading projects, I prioritise teamwork, ensuring every team member's voice is heard, because exceptional experiences are born from collaboration. It's the synergy of diverse skills that drives success.</p>
+        <p style="margin:0; font-size:clamp(14px,1.4vw,17px); line-height:1.7; text-wrap:pretty; opacity:.86">I value an environment where we collaborate through thick and thin. In my view, all ideas hold equal weight in a humble atmosphere, <strong style="font-weight:700">where the best idea wins, not the loudest voice.</strong> A positive team spirit leads to better products.</p>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:clamp(20px,3vh,32px)">
+    <div style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:16px; align-items:baseline">
+      <h3 style="flex:1 1 200px; min-width:0; overflow-wrap:anywhere; margin:0; font-weight:700; font-size:clamp(19px,3vw,42px); line-height:1; letter-spacing:-.02em; text-transform:uppercase; transform:skewX(-7deg)">My toolbox</h3>
+      <span style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.45">Scope → Delivery</span>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; gap:1px; border:1px solid rgba(246,245,242,.18)">
+      <div style="flex:1 1 180px; min-width:0; background:#0b0b0b; box-shadow:0 0 0 1px rgba(246,245,242,.18); padding:clamp(20px,2.6vw,32px); display:flex; flex-direction:column; gap:clamp(12px,1.8vh,20px)">
+        <span style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.45">01 Scope</span>
+        <ul style="margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:7px; font-size:clamp(13px,1.3vw,15px); line-height:1.4; opacity:.86">
+          <li>Brief</li><li>Workshop</li><li>Stakeholder input</li><li>KPI's</li><li>Timeplan + cost</li>
+        </ul>
+      </div>
+      <div style="flex:1 1 180px; min-width:0; background:#0b0b0b; box-shadow:0 0 0 1px rgba(246,245,242,.18); padding:clamp(20px,2.6vw,32px); display:flex; flex-direction:column; gap:clamp(12px,1.8vh,20px)">
+        <span style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.45">02 Insights</span>
+        <ul style="margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:7px; font-size:clamp(13px,1.3vw,15px); line-height:1.4; opacity:.86">
+          <li>Target group analysis</li><li>Benchmarking</li><li>User research</li><li>Analytics</li><li>Holistic reviews</li><li>Strategies &amp; insights</li>
+        </ul>
+      </div>
+      <div style="flex:1 1 180px; min-width:0; background:#0b0b0b; box-shadow:0 0 0 1px rgba(246,245,242,.18); padding:clamp(20px,2.6vw,32px); display:flex; flex-direction:column; gap:clamp(12px,1.8vh,20px)">
+        <span style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.45">03 Framing</span>
+        <ul style="margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:7px; font-size:clamp(13px,1.3vw,15px); line-height:1.4; opacity:.86">
+          <li>Customer &amp; user journeys</li><li>Impact &amp; Content mapping</li><li>Personas</li>
+        </ul>
+      </div>
+      <div style="flex:1 1 180px; min-width:0; background:#0b0b0b; box-shadow:0 0 0 1px rgba(246,245,242,.18); padding:clamp(20px,2.6vw,32px); display:flex; flex-direction:column; gap:clamp(12px,1.8vh,20px)">
+        <span style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.45">04 Concept</span>
+        <ul style="margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:7px; font-size:clamp(13px,1.3vw,15px); line-height:1.4; opacity:.86">
+          <li>Storyboarding</li><li>Sketching</li><li>Wireframing</li><li>User tests</li><li>Prototyping</li><li>Flowcharts</li><li>Moodboards</li>
+        </ul>
+      </div>
+      <div style="flex:1 1 180px; min-width:0; background:#0b0b0b; box-shadow:0 0 0 1px rgba(246,245,242,.18); padding:clamp(20px,2.6vw,32px); display:flex; flex-direction:column; gap:clamp(12px,1.8vh,20px)">
+        <span style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.45">05 Design</span>
+        <ul style="margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:7px; font-size:clamp(13px,1.3vw,15px); line-height:1.4; opacity:.86">
+          <li>Art direction</li><li>Graphic design</li><li>Design systems</li><li>Visual identity</li><li>On brand alignment</li><li>Animations</li>
+        </ul>
+      </div>
+      <div style="flex:1 1 100%; background:#0b0b0b; box-shadow:0 0 0 1px rgba(246,245,242,.18); padding:clamp(20px,2.6vw,32px); display:flex; flex-wrap:wrap; align-items:baseline; gap:clamp(16px,3vw,48px)">
+        <span ref="{{ accentRef }}" style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; color:#5b6bff">06 Delivery</span>
+        <ul style="margin:0; padding:0; list-style:none; display:flex; flex-wrap:wrap; gap:7px clamp(16px,3vw,48px); font-size:clamp(13px,1.3vw,15px); line-height:1.4">
+          <li>Final product</li><li>Final experience</li><li>Final asset delivery</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr)); gap:clamp(20px,3vw,48px); align-items:baseline; border-top:1px solid rgba(246,245,242,.18); padding-top:clamp(20px,3vh,32px)">
+    <h3 style="flex:1 1 200px; min-width:0; overflow-wrap:anywhere; margin:0; font-weight:700; font-size:clamp(19px,3vw,42px); line-height:1; letter-spacing:-.02em; text-transform:uppercase; transform:skewX(-7deg)">Software</h3>
+    <div style="grid-column:span 2; display:flex; flex-direction:column; gap:clamp(10px,1.4vh,16px)"><p style="margin:0; font-size:clamp(14px,1.4vw,17px); line-height:1.7; text-wrap:pretty; opacity:.86">Figma, Sketch, Illustrator, Photoshop, After Effects, Adobe Premiere, InDesign, Unity, Blender, and the list keeps growing.</p>
+    <p style="margin:0; font-size:clamp(13px,1.2vw,15px); line-height:1.7; text-wrap:pretty; opacity:.55">(And yes, with the knowledge of how things are made, AI gives me superpowers. At least, that is how I tackle it: as a designer I am handed a much bigger playground, and I can do things in an hour that used to take weeks.)</p></div>
+  </div>
+</div>
+
+<div style="position:relative; z-index:4; background:#f6f5f2; color:#111; transform:none; font-family:'Archivo', Helvetica, Arial, sans-serif; padding:clamp(40px,8vh,96px) clamp(20px,5vw,80px) clamp(56px,12vh,150px)">
+  <div style="display:flex; flex-direction:column; gap:clamp(28px,4vw,52px)">
+    <div style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:16px; align-items:baseline">
+      <span style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.45" id="work">03. My work</span>
+    </div>
+    <div style="display:flex; flex-direction:column">
+      <h2 style="margin:0; font-family:'Archivo', Helvetica, Arial, sans-serif; font-weight:700; font-size:clamp(40px,5.6vw,78px); line-height:1; letter-spacing:-.03em; text-transform:uppercase; transform:skewX(-7deg)">My work</h2>
+      <h2 style="margin:0; font-family:'Archivo', Helvetica, Arial, sans-serif; font-weight:700; font-size:clamp(24px,3.2vw,44px); line-height:1.1; letter-spacing:-.02em; text-transform:uppercase; color:#8b8cf7; transform:skewX(-7deg)" ref="{{ accent10Ref }}">Three projects,<br />up close</h2>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:clamp(56px,10vh,140px); padding-top:clamp(16px,4vh,48px)">
+
+      <div style="display:flex; flex-direction:column; gap:clamp(20px,3vw,36px)">
+        <div style="display:flex; flex-direction:column; gap:clamp(10px,1.4vh,16px)">
+          <span style="display:flex; flex-wrap:wrap; gap:clamp(12px,2vw,26px); font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.45"><span>Case 01</span><span>2026 → ongoing</span></span>
+          <h3 style="margin:0; font-weight:700; font-size:clamp(30px,5vw,68px); line-height:.95; letter-spacing:-.035em; text-transform:uppercase; transform:skewX(-7deg); text-wrap:pretty">Rebl Industries<br />Operator App</h3>
+        </div>
+        <div ref="{{ gallery2FitRef }}" style="position:relative; width:100vw">
+          <div data-gallery="" ref="{{ gallery2Ref }}" onPointerDown="{{ onGalleryDown }}" style="cursor:grab; display:flex; align-items:stretch; gap:0; height:max(46vh, clamp(240px,35vw,552px)); overflow-x:auto; overflow-y:hidden; scroll-snap-type:x proximity; scroll-behavior:smooth; scrollbar-width:none; overflow-anchor:none">
+            <div style="flex:0 0 auto; height:100%; scroll-snap-align:start; background:#0c0d0b;">
+              <img src="uploads/rebl-trollet.webp" alt="Trollet, locked idle state" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block" />
+            </div>
+            <div style="flex:0 0 auto; height:100%; scroll-snap-align:start; background:#0c0d0b;">
+              <img src="uploads/hmi-operator.webp" alt="Operator app running on the machine HMI" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block" />
+            </div>
+            <div style="flex:0 0 auto; height:100%; scroll-snap-align:start; background:#0c0d0b;">
+              <img src="uploads/rebl-palladin.webp" alt="Palladin safety zone view" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block" />
+            </div>
+            <div style="flex:0 0 auto; height:100%; scroll-snap-align:start; background:#0c0d0b;">
+              <img src="uploads/rebl-indooser.webp" alt="Indooser throughput view" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block" />
+            </div>
+            <div style="flex:0 0 auto; height:100%; scroll-snap-align:start; background:#0c0d0b;">
+              <img src="uploads/rebl-ipad-1.webp" alt="Naming the robot, tablet companion" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block" />
+            </div>
+            <div style="flex:0 0 auto; height:100%; scroll-snap-align:start; background:#0c0d0b;">
+              <img src="uploads/rebl-ipad-2.webp" alt="Idle companion screen" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block" />
+            </div>
+            <div style="flex:0 0 auto; height:100%; scroll-snap-align:start; background:#0c0d0b;">
+              <img src="uploads/rebl-ipad-3.webp" alt="Naming the robot, dark companion view" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block" />
+            </div>
+          </div>
+          <div style="display:flex; justify-content:flex-end; padding:clamp(10px,1.4vw,16px) clamp(20px,5vw,80px) 0">
+            <span onClick="{{ gallery2Next }}" style="font-size:clamp(9px,1vw,12px); letter-spacing:.16em; text-transform:uppercase; opacity:.45; cursor:pointer; user-select:none; transition:opacity .2s ease" style-hover="opacity:.9">Drag →</span>
+          </div>
+        </div>
+        <p style="margin:0; max-width:24ch; font-weight:700; font-size:clamp(22px,3vw,42px); line-height:1.05; letter-spacing:-.02em; text-transform:uppercase; transform:skewX(-7deg); text-wrap:pretty">Designing the interface between humans and industrial robots.</p>
+
+        <div style="display:flex; flex-wrap:wrap; gap:1px; background:rgba(17,17,17,.14); border:1px solid rgba(17,17,17,.14)">
+          <div style="flex:1 1 200px; min-width:0; background:#efeee9; padding:clamp(16px,2vw,26px); display:flex; flex-direction:column; gap:10px">
+            <span style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.45">Role</span>
+            <span style="font-size:clamp(13px,1.3vw,16px); line-height:1.45">Product Design Lead, sole responsibility for UX/UI, working closely with developers</span>
+          </div>
+          <div style="flex:1 1 200px; min-width:0; background:#efeee9; padding:clamp(16px,2vw,26px); display:flex; flex-direction:column; gap:10px">
+            <span style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.45">Focus</span>
+            <span style="font-size:clamp(13px,1.3vw,16px); line-height:1.45">UX Design, UI Design, Interaction Design, User Research</span>
+          </div>
+          <div style="flex:1 1 200px; min-width:0; background:#efeee9; padding:clamp(16px,2vw,26px); display:flex; flex-direction:column; gap:10px">
+            <span style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.45">Users</span>
+            <span style="font-size:clamp(13px,1.3vw,16px); line-height:1.45">Warehouse and production operators</span>
+          </div>
+          <div style="flex:1 1 200px; min-width:0; background:#efeee9; padding:clamp(16px,2vw,26px); display:flex; flex-direction:column; gap:10px">
+            <span style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.45">Process</span>
+            <span style="font-size:clamp(13px,1.3vw,16px); line-height:1.45">On-site Research, Prototyping, User Testing, Iteration</span>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column">
+          <div data-chaprow="" style="display:flex; flex-wrap:wrap; gap:clamp(14px,3vw,48px); align-items:start; padding:clamp(22px,3.4vh,40px) 0; border-top:1px solid rgba(17,17,17,.14)">
+            <span style="flex:0 0 auto; width:5ch; font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; opacity:.4; padding-top:.6em">01</span>
+            <h4 style="flex:1 1 200px; min-width:0; overflow-wrap:anywhere; margin:0; font-weight:700; font-size:clamp(18px,2.6vw,36px); line-height:1; letter-spacing:-.02em; text-transform:uppercase; transform:skewX(-7deg); text-wrap:pretty">The challenge</h4>
+            <div data-chapbody="" style="flex:2 1 300px; min-width:0; display:flex; flex-direction:column; gap:clamp(12px,1.6vh,18px)">
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">Rebl Industries builds robotic workmates that take on repetitive, heavy and hazardous tasks in warehouses and production environments. My responsibility was to design the complete operator experience.</p>
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">These are fast-paced environments where operators have a lot going on around them. They don't have time to stop and figure out an interface. They need to quickly understand what the robot is doing, what it needs and when they need to step in.</p>
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">The challenge was to make something very complex behind the scenes feel simple, clear and reliable in the middle of all that.</p>
+            </div>
+          </div>
+          <div data-chaprow="" style="display:flex; flex-wrap:wrap; gap:clamp(14px,3vw,48px); align-items:start; padding:clamp(22px,3.4vh,40px) 0; border-top:1px solid rgba(17,17,17,.14)">
+            <span style="flex:0 0 auto; width:5ch; font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; opacity:.4; padding-top:.6em">02</span>
+            <h4 style="flex:1 1 200px; min-width:0; overflow-wrap:anywhere; margin:0; font-weight:700; font-size:clamp(18px,2.6vw,36px); line-height:1; letter-spacing:-.02em; text-transform:uppercase; transform:skewX(-7deg); text-wrap:pretty">Starting from<br />scratch</h4>
+            <div data-chapbody="" style="flex:2 1 300px; min-width:0; display:flex; flex-direction:column; gap:clamp(12px,1.6vh,18px)">
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">There were no existing products or established patterns to reference. We were figuring out how an operator should interact with and understand a robotic workmate while the product itself was still being developed.</p>
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">I had to work through questions like what information an operator actually needs, what the robot should communicate and how to make it immediately clear when something needs attention.</p>
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">The interface also had to adapt to three different jobs: picking products, palletizing and inducing. Each with its own needs, while still feeling like one product.</p>
+            </div>
+          </div>
+          <div data-chaprow="" style="display:flex; flex-wrap:wrap; gap:clamp(14px,3vw,48px); align-items:start; padding:clamp(22px,3.4vh,40px) 0; border-top:1px solid rgba(17,17,17,.14)">
+            <span style="flex:0 0 auto; width:5ch; font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; opacity:.4; padding-top:.6em">03</span>
+            <h4 style="flex:1 1 200px; min-width:0; overflow-wrap:anywhere; margin:0; font-weight:700; font-size:clamp(18px,2.6vw,36px); line-height:1; letter-spacing:-.02em; text-transform:uppercase; transform:skewX(-7deg); text-wrap:pretty">Working with<br />operators</h4>
+            <div data-chapbody="" style="flex:2 1 300px; min-width:0; display:flex; flex-direction:column; gap:clamp(12px,1.6vh,18px)">
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">A big part of the process was getting out on site and seeing what the environment was actually like.</p>
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">I worked closely with operators, including at IKEA, observing their workflows and talking directly with them about how they worked, what slowed them down and what they needed from the robot.</p>
+            </div>
+          </div>
+          <div data-chaprow="" style="display:flex; flex-wrap:wrap; gap:clamp(14px,3vw,48px); align-items:start; padding:clamp(22px,3.4vh,40px) 0; border-top:1px solid rgba(17,17,17,.14)">
+            <span style="flex:0 0 auto; width:5ch; font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; opacity:.4; padding-top:.6em">04</span>
+            <h4 style="flex:1 1 200px; min-width:0; overflow-wrap:anywhere; margin:0; font-weight:700; font-size:clamp(18px,2.6vw,36px); line-height:1; letter-spacing:-.02em; text-transform:uppercase; transform:skewX(-7deg); text-wrap:pretty">The operator<br />experience</h4>
+            <div data-chapbody="" style="flex:2 1 300px; min-width:0; display:flex; flex-direction:column; gap:clamp(12px,1.6vh,18px)">
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">The operator app became the main connection between the person and the robot.</p>
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">The goal wasn't to show everything the robot could do. It was to show the right information at the right time and make it immediately clear what was happening and what the operator needed to do next.</p>
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">Just as important was how the robot came across. It had to feel like a helper and a workmate, something positive that takes the heavy and repetitive work off your hands, not a machine sent in to take your job. Giving it a name and a bit of personality made that shift, and operators started talking about it as part of the team.</p>
+            </div>
+          </div>
+        </div>
+
+        <p style="margin:0; max-width:18ch; font-weight:700; font-size:clamp(28px,4.4vw,62px); line-height:1; letter-spacing:-.03em; text-transform:uppercase; transform:skewX(-7deg); color:#8b8cf7" ref="{{ accent9Ref }}">The robot is a colleague, not a replacement.</p>
+
+        <div style="display:flex; flex-wrap:wrap; align-items:baseline; gap:clamp(14px,2.4vw,32px); border-top:1px solid rgba(17,17,17,.14); padding-top:clamp(12px,1.8vh,18px)">
+          <span style="font-size:clamp(11px,1.15vw,13px); letter-spacing:.18em; text-transform:uppercase; opacity:.78; transform:skewX(-7deg)">Product design</span>
+          <span style="font-size:clamp(11px,1.15vw,13px); letter-spacing:.18em; text-transform:uppercase; opacity:.78; transform:skewX(-7deg)">UX</span>
+          <span style="font-size:clamp(11px,1.15vw,13px); letter-spacing:.18em; text-transform:uppercase; opacity:.78; transform:skewX(-7deg)">HMI</span>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:clamp(20px,3vw,36px)">
+        <div style="display:flex; flex-direction:column; gap:clamp(10px,1.4vh,16px)">
+          <span style="display:flex; flex-wrap:wrap; gap:clamp(12px,2vw,26px); font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.45"><span>Case 02</span><span>2016 → 2018</span></span>
+          <h3 style="margin:0; font-weight:700; font-size:clamp(30px,5vw,68px); line-height:.95; letter-spacing:-.035em; text-transform:uppercase; transform:skewX(-7deg); text-wrap:pretty">Opera for Android<br />Product Design</h3>
+        </div>
+        <div ref="{{ wall2FitRef }}" style="position:relative; width:100vw">
+          <div data-gallery="" data-depth="" ref="{{ wall2Ref }}" onPointerDown="{{ onGalleryDown }}" style="cursor:grab; display:flex; align-items:center; height:clamp(336px,48vw,624px); overflow-x:auto; overflow-y:hidden; scroll-behavior:smooth; scrollbar-width:none; overflow-anchor:none; padding:clamp(20px,4vh,44px) clamp(20px,5vw,80px)">
+            <div style="box-shadow:0 12px 26px rgba(17,17,17,.26); flex:0 0 auto; position:relative; z-index:60; height:78%; margin:-3% 0 0 -3.5%; transform:rotate(-2.6deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1); will-change:transform; backface-visibility:hidden" style-hover="transform:rotate(0deg) scale(1.05); z-index:200">
+              <img src="uploads/opera-speeddial.webp" alt="Opera speed dial" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+            </div>
+            <div style="box-shadow:0 12px 26px rgba(17,17,17,.26); flex:0 0 auto; position:relative; z-index:8; height:58%; margin:-4% 0 0 -3%; transform:rotate(2.6deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1); will-change:transform; backface-visibility:hidden" style-hover="transform:rotate(0deg) scale(1.05); z-index:200">
+              <img src="uploads/opera-theme-study.webp" alt="Light and dark theme study" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+            </div>
+            <div ref="{{ operaFirstRef }}" style="box-shadow:0 12px 26px rgba(17,17,17,.26); flex:0 0 auto; position:relative; z-index:40; height:76%; margin:5% 0 0 -3.5%; transform:rotate(-3.4deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1); will-change:transform; backface-visibility:hidden" style-hover="transform:rotate(0deg) scale(1.05); z-index:200">
+              <img src="uploads/opera-signin.webp" alt="Opera sign-in sheet" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+            </div>
+            <div style="box-shadow:0 12px 26px rgba(17,17,17,.26); flex:0 0 auto; position:relative; z-index:14; height:74%; margin:4% 0 0 -3.5%; transform:rotate(3.2deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1); will-change:transform; backface-visibility:hidden" style-hover="transform:rotate(0deg) scale(1.05); z-index:200">
+              <img src="uploads/opera-menu.webp" alt="Opera menu sheet" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+            </div>
+            <div style="box-shadow:0 12px 26px rgba(17,17,17,.26); flex:0 0 auto; position:relative; z-index:16; height:66%; margin:4% 0 0 -3.5%; transform:rotate(-2.6deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1); will-change:transform; backface-visibility:hidden" style-hover="transform:rotate(0deg) scale(1.05); z-index:200">
+              <img src="uploads/opera-scr-1.webp" alt="Search suggestions, light" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+            </div>
+            <div style="box-shadow:0 12px 26px rgba(17,17,17,.26); flex:0 0 auto; position:relative; z-index:15; height:70%; margin:-3% 0 0 -3.5%; transform:rotate(3.2deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1); will-change:transform; backface-visibility:hidden" style-hover="transform:rotate(0deg) scale(1.05); z-index:200">
+              <img src="uploads/opera-scr-2.webp" alt="Search suggestions, dark" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+            </div>
+            <div style="box-shadow:0 12px 26px rgba(17,17,17,.26); flex:0 0 auto; position:relative; z-index:14; height:64%; margin:5% 0 0 -3.5%; transform:rotate(-3.4deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1); will-change:transform; backface-visibility:hidden" style-hover="transform:rotate(0deg) scale(1.05); z-index:200">
+              <img src="uploads/opera-scr-3.webp" alt="Bookmarks, dark" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+            </div>
+            <div style="box-shadow:0 12px 26px rgba(17,17,17,.26); flex:0 0 auto; position:relative; z-index:13; height:68%; margin:-4% 0 0 -3.5%; transform:rotate(2.4deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1); will-change:transform; backface-visibility:hidden" style-hover="transform:rotate(0deg) scale(1.05); z-index:200">
+              <img src="uploads/opera-scr-4.webp" alt="Bookmarks, light" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+            </div>
+            <div style="box-shadow:0 12px 26px rgba(17,17,17,.26); flex:0 0 auto; position:relative; z-index:12; height:62%; margin:6% 0 0 -3.5%; transform:rotate(-2.2deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1); will-change:transform; backface-visibility:hidden" style-hover="transform:rotate(0deg) scale(1.05); z-index:200">
+              <img src="uploads/opera-scr-5.webp" alt="Bookmarks, dark variant" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+            </div>
+            <div style="box-shadow:0 12px 26px rgba(17,17,17,.26); flex:0 0 auto; position:relative; z-index:11; height:66%; margin:-2% 0 0 -3.5%; transform:rotate(3.6deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1); will-change:transform; backface-visibility:hidden" style-hover="transform:rotate(0deg) scale(1.05); z-index:200">
+              <img src="uploads/opera-scr-6.webp" alt="In-page browsing" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+            </div>
+          </div>
+          <div style="display:flex; justify-content:flex-end; padding:clamp(10px,1.4vw,16px) clamp(20px,5vw,80px) 0">
+            <span onClick="{{ wall2Next }}" style="font-size:clamp(9px,1vw,12px); letter-spacing:.16em; text-transform:uppercase; opacity:.45; cursor:pointer; user-select:none; transition:opacity .2s ease" style-hover="opacity:.9">Drag →</span>
+          </div>
+        </div>
+        <p style="margin:0; max-width:24ch; font-weight:700; font-size:clamp(22px,3vw,42px); line-height:1.05; letter-spacing:-.02em; text-transform:uppercase; transform:skewX(-7deg); text-wrap:pretty">A complete redesign of a mobile browser used by millions of people around the world.</p>
+
+        <div style="display:flex; flex-wrap:wrap; gap:1px; background:rgba(17,17,17,.14); border:1px solid rgba(17,17,17,.14)">
+          <div style="flex:1 1 200px; min-width:0; background:#efeee9; padding:clamp(16px,2vw,26px); display:flex; flex-direction:column; gap:10px">
+            <span style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.45">Role</span>
+            <span style="font-size:clamp(13px,1.3vw,16px); line-height:1.45">Product Designer</span>
+          </div>
+          <div style="flex:1 1 200px; min-width:0; background:#efeee9; padding:clamp(16px,2vw,26px); display:flex; flex-direction:column; gap:10px">
+            <span style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.45">Focus</span>
+            <span style="font-size:clamp(13px,1.3vw,16px); line-height:1.45">Product Design, UX/UI, Design Systems, User Research</span>
+          </div>
+          <div style="flex:1 1 200px; min-width:0; background:#efeee9; padding:clamp(16px,2vw,26px); display:flex; flex-direction:column; gap:10px">
+            <span style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.45">Team</span>
+            <span style="font-size:clamp(13px,1.3vw,16px); line-height:1.45">Small design team of 3, sharing responsibilities across the product</span>
+          </div>
+          <div style="flex:1 1 200px; min-width:0; background:#efeee9; padding:clamp(16px,2vw,26px); display:flex; flex-direction:column; gap:10px">
+            <span style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.45">Methods</span>
+            <span style="font-size:clamp(13px,1.3vw,16px); line-height:1.45">A/B Testing, Beta Releases, Surveys, Community Feedback</span>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column">
+          <div data-chaprow="" style="display:flex; flex-wrap:wrap; gap:clamp(14px,3vw,48px); align-items:start; padding:clamp(22px,3.4vh,40px) 0; border-top:1px solid rgba(17,17,17,.14)">
+            <span style="flex:0 0 auto; width:5ch; font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; opacity:.4; padding-top:.6em">01</span>
+            <h4 style="flex:1 1 200px; min-width:0; overflow-wrap:anywhere; margin:0; font-weight:700; font-size:clamp(18px,2.6vw,36px); line-height:1; letter-spacing:-.02em; text-transform:uppercase; transform:skewX(-7deg); text-wrap:pretty">Rethinking the<br />mobile browser</h4>
+            <div data-chapbody="" style="flex:2 1 300px; min-width:0; display:flex; flex-direction:column; gap:clamp(12px,1.6vh,18px)">
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">We set out to completely redesign Opera for Android, from the overall experience and navigation to the visual language and components behind it.</p>
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">We were a small team of three sharing responsibility across the product. This meant working on everything from early concepts and interaction patterns to testing, iteration and final implementation.</p>
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">With millions of existing users, even small changes could have a big impact. We had to balance pushing the product forward with respecting the habits people had already built around it.</p>
+            </div>
+          </div>
+          <div data-chaprow="" style="display:flex; flex-wrap:wrap; gap:clamp(14px,3vw,48px); align-items:start; padding:clamp(22px,3.4vh,40px) 0; border-top:1px solid rgba(17,17,17,.14)">
+            <span style="flex:0 0 auto; width:5ch; font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; opacity:.4; padding-top:.6em">02</span>
+            <h4 style="flex:1 1 200px; min-width:0; overflow-wrap:anywhere; margin:0; font-weight:700; font-size:clamp(18px,2.6vw,36px); line-height:1; letter-spacing:-.02em; text-transform:uppercase; transform:skewX(-7deg); text-wrap:pretty">Designing with<br />real users</h4>
+            <div data-chapbody="" style="flex:2 1 300px; min-width:0; display:flex; flex-direction:column; gap:clamp(12px,1.6vh,18px)">
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">Testing was a big part of how we worked. We used A/B testing and beta releases to try ideas with real users before rolling them out more broadly.</p>
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">We also sent out surveys and engaged directly with the Opera community, which at the time was incredibly active and vocal about the product.</p>
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">This gave us a constant feedback loop between what we designed, what the data told us and what people were actually saying.</p>
+            </div>
+          </div>
+          <div data-chaprow="" style="display:flex; flex-wrap:wrap; gap:clamp(14px,3vw,48px); align-items:start; padding:clamp(22px,3.4vh,40px) 0; border-top:1px solid rgba(17,17,17,.14)">
+            <span style="flex:0 0 auto; width:5ch; font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; opacity:.4; padding-top:.6em">03</span>
+            <h4 style="flex:1 1 200px; min-width:0; overflow-wrap:anywhere; margin:0; font-weight:700; font-size:clamp(18px,2.6vw,36px); line-height:1; letter-spacing:-.02em; text-transform:uppercase; transform:skewX(-7deg); text-wrap:pretty">Building the<br />design system</h4>
+            <div data-chapbody="" style="flex:2 1 300px; min-width:0; display:flex; flex-direction:column; gap:clamp(12px,1.6vh,18px)">
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">Alongside the redesign, we built a new design system for the browser.</p>
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">We created reusable components, interaction patterns and guidelines that gave the product a more consistent foundation and made it easier for design and development to work together as the browser continued to evolve.</p>
+            </div>
+          </div>
+          <div data-chaprow="" style="display:flex; flex-wrap:wrap; gap:clamp(14px,3vw,48px); align-items:start; padding:clamp(22px,3.4vh,40px) 0; border-top:1px solid rgba(17,17,17,.14)">
+            <span style="flex:0 0 auto; width:5ch; font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; opacity:.4; padding-top:.6em">04</span>
+            <h4 style="flex:1 1 200px; min-width:0; overflow-wrap:anywhere; margin:0; font-weight:700; font-size:clamp(18px,2.6vw,36px); line-height:1; letter-spacing:-.02em; text-transform:uppercase; transform:skewX(-7deg); color:#5b6bff; text-wrap:pretty" ref="{{ accent7Ref }}">An idea that became<br />the standard</h4>
+            <div data-chapbody="" style="flex:2 1 300px; min-width:0; display:flex; flex-direction:column; gap:clamp(12px,1.6vh,18px)">
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">One direction we pushed for was moving the search and address bar to the bottom of the screen, keeping one of the most used actions closer to the thumb and easier to reach with one hand.</p>
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">It challenged a browser pattern that was very established at the time, so it took a lot of testing and convincing before it made it into the product. It shipped, and you can see it in the <span onClick="{{ showBottomBar }}" ref="{{ accent8Ref }}" style="color:#5b6bff; cursor:pointer; font-weight:600; transition:opacity .2s ease" style-hover="opacity:.6">third screen of the wall above</span>.</p>
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">The thumb-reachable search bar is common across mobile browsers today, which is a nice thing to look back on.</p>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; align-items:baseline; gap:clamp(14px,2.4vw,32px); border-top:1px solid rgba(17,17,17,.14); padding-top:clamp(12px,1.8vh,18px)">
+          <span style="font-size:clamp(11px,1.15vw,13px); letter-spacing:.18em; text-transform:uppercase; opacity:.78; transform:skewX(-7deg)">Product design</span>
+          <span style="font-size:clamp(11px,1.15vw,13px); letter-spacing:.18em; text-transform:uppercase; opacity:.78; transform:skewX(-7deg)">Mobile</span>
+          <span style="font-size:clamp(11px,1.15vw,13px); letter-spacing:.18em; text-transform:uppercase; opacity:.78; transform:skewX(-7deg)">UX</span>
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:clamp(20px,3vw,36px)">
+        <div style="display:flex; flex-direction:column; gap:clamp(10px,1.4vh,16px)">
+          <span style="display:flex; flex-wrap:wrap; gap:clamp(12px,2vw,26px); font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.45"><span>Case 03</span><span>2024</span></span>
+          <h3 style="margin:0; font-weight:700; font-size:clamp(30px,5vw,68px); line-height:.95; letter-spacing:-.035em; text-transform:uppercase; transform:skewX(-7deg); text-wrap:pretty">World of Volvo<br />Life Balance Station</h3>
+        </div>
+        <div ref="{{ galleryFitRef }}" style="position:relative; width:100vw">
+          <div data-gallery="" ref="{{ galleryRef }}" onPointerDown="{{ onGalleryDown }}" style="cursor:grab; display:flex; align-items:stretch; gap:0; height:max(46vh, clamp(240px,35vw,552px)); overflow-x:auto; overflow-y:hidden; scroll-snap-type:x proximity; scroll-behavior:smooth; scrollbar-width:none; overflow-anchor:none">
+            <div style="flex:0 0 auto; height:100%; scroll-snap-align:start; background:#0c0d0b;">
+              <img src="uploads/lbs-start.webp" alt="Life Balance start screen at the installation" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block" />
+            </div>
+            <div style="flex:0 0 auto; height:100%; scroll-snap-align:start; background:#0c0d0b;">
+              <img src="uploads/lbs-states.webp" alt="Life Balance Station, four colour states" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block" />
+            </div>
+            <div style="flex:0 0 auto; height:100%; scroll-snap-align:start; background:#0c0d0b;">
+              <img src="uploads/volvo-station.webp" alt="Life Balance Station installed at World of Volvo" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block" />
+            </div>
+            <div style="flex:0 0 auto; height:100%; scroll-snap-align:start; background:#0c0d0b;">
+              <img src="uploads/volvo-disc.webp" alt="Language select on the balance disc" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block" />
+            </div>
+          </div>
+          <div style="display:flex; justify-content:flex-end; padding:clamp(10px,1.4vw,16px) clamp(20px,5vw,80px) 0">
+            <span onClick="{{ galleryNext }}" style="font-size:clamp(9px,1vw,12px); letter-spacing:.16em; text-transform:uppercase; opacity:.45; cursor:pointer; user-select:none; transition:opacity .2s ease" style-hover="opacity:.9">Drag →</span>
+          </div>
+        </div>
+        <p style="margin:0; max-width:24ch; font-weight:700; font-size:clamp(22px,3vw,42px); line-height:1.05; letter-spacing:-.02em; text-transform:uppercase; transform:skewX(-7deg); text-wrap:pretty">An interactive experience for World of Volvo exploring the human side of safety.</p>
+
+        <div style="display:flex; flex-wrap:wrap; gap:1px; background:rgba(17,17,17,.14); border:1px solid rgba(17,17,17,.14)">
+          <div style="flex:1 1 200px; min-width:0; background:#efeee9; padding:clamp(16px,2vw,26px); display:flex; flex-direction:column; gap:10px">
+            <span style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.45">Role</span>
+            <span style="font-size:clamp(13px,1.3vw,16px); line-height:1.45">Product Designer / Design Lead</span>
+          </div>
+          <div style="flex:1 1 200px; min-width:0; background:#efeee9; padding:clamp(16px,2vw,26px); display:flex; flex-direction:column; gap:10px">
+            <span style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.45">Focus</span>
+            <span style="font-size:clamp(13px,1.3vw,16px); line-height:1.45">UX &amp; Experience Design, Interaction Design, Art Direction</span>
+          </div>
+          <div style="flex:1 1 200px; min-width:0; background:#efeee9; padding:clamp(16px,2vw,26px); display:flex; flex-direction:column; gap:10px">
+            <span style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.45">Development</span>
+            <span style="font-size:clamp(13px,1.3vw,16px); line-height:1.45">I coded 90% of the front end in Unity</span>
+          </div>
+          <div style="flex:1 1 200px; min-width:0; background:#efeee9; padding:clamp(16px,2vw,26px); display:flex; flex-direction:column; gap:10px">
+            <span style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.45">Responsibilities</span>
+            <span style="font-size:clamp(13px,1.3vw,16px); line-height:1.45">Concept development, playtesting, design direction and final delivery</span>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column">
+          <div data-chaprow="" style="display:flex; flex-wrap:wrap; gap:clamp(14px,3vw,48px); align-items:start; padding:clamp(22px,3.4vh,40px) 0; border-top:1px solid rgba(17,17,17,.14)">
+            <span style="flex:0 0 auto; width:5ch; font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; opacity:.4; padding-top:.6em">01</span>
+            <h4 style="flex:1 1 200px; min-width:0; overflow-wrap:anywhere; margin:0; font-weight:700; font-size:clamp(18px,2.6vw,36px); line-height:1; letter-spacing:-.02em; text-transform:uppercase; transform:skewX(-7deg); text-wrap:pretty">The challenge</h4>
+            <div data-chapbody="" style="flex:2 1 300px; min-width:0; display:flex; flex-direction:column; gap:clamp(12px,1.6vh,18px)">
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">We were asked to create an interactive experience for World of Volvo around the idea of the last percentage of safety, the part that still comes down to us as humans.</p>
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">The challenge was that we couldn't mention cars or show them in any way. We had to find another way to make people understand and feel the importance of human attention.</p>
+            </div>
+          </div>
+          <div data-chaprow="" style="display:flex; flex-wrap:wrap; gap:clamp(14px,3vw,48px); align-items:start; padding:clamp(22px,3.4vh,40px) 0; border-top:1px solid rgba(17,17,17,.14)">
+            <span style="flex:0 0 auto; width:5ch; font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; opacity:.4; padding-top:.6em">02</span>
+            <h4 style="flex:1 1 200px; min-width:0; overflow-wrap:anywhere; margin:0; font-weight:700; font-size:clamp(18px,2.6vw,36px); line-height:1; letter-spacing:-.02em; text-transform:uppercase; transform:skewX(-7deg); text-wrap:pretty">Finding the<br />concept</h4>
+            <div data-chapbody="" style="flex:2 1 300px; min-width:0; display:flex; flex-direction:column; gap:clamp(12px,1.6vh,18px)">
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">During ideation, the team locked ourselves in a room and eventually landed on a simple idea: <span ref="{{ accent11Ref }}" style="display:inline-block; font-weight:700; text-transform:uppercase; letter-spacing:-.01em; color:#5b6bff; transform:skewX(-7deg)">balance</span>.</p>
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">Balance gave us a way to turn something quite abstract into something you could actually feel and interact with.</p>
+            </div>
+          </div>
+          <div data-chaprow="" style="display:flex; flex-wrap:wrap; gap:clamp(14px,3vw,48px); align-items:start; padding:clamp(22px,3.4vh,40px) 0; border-top:1px solid rgba(17,17,17,.14)">
+            <span style="flex:0 0 auto; width:5ch; font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; opacity:.4; padding-top:.6em">03</span>
+            <h4 style="flex:1 1 200px; min-width:0; overflow-wrap:anywhere; margin:0; font-weight:700; font-size:clamp(18px,2.6vw,36px); line-height:1; letter-spacing:-.02em; text-transform:uppercase; transform:skewX(-7deg); text-wrap:pretty">The experience</h4>
+            <div data-chapbody="" style="flex:2 1 300px; min-width:0; display:flex; flex-direction:column; gap:clamp(12px,1.6vh,18px)">
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">The experience is about keeping a digital ball balanced on a plate, controlled by a physical plate in your hands.</p>
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">Holding a real object is what makes it land. Every tilt of your hands moves the ball on screen instantly, so the physical and the digital stop being two separate things. The weight in your hands becomes the weight on screen, and the responsibility starts to feel like yours.</p>
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">As you travel through the world, a narrative unfolds while distractions start competing for your attention. You're trying to follow what's happening around you while also keeping the ball from falling.</p>
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">The further you go, the more your attention is challenged.</p>
+            </div>
+          </div>
+          <div data-chaprow="" style="display:flex; flex-wrap:wrap; gap:clamp(14px,3vw,48px); align-items:start; padding:clamp(22px,3.4vh,40px) 0; border-top:1px solid rgba(17,17,17,.14)">
+            <span style="flex:0 0 auto; width:5ch; font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; opacity:.4; padding-top:.6em">04</span>
+            <h4 style="flex:1 1 200px; min-width:0; overflow-wrap:anywhere; margin:0; font-weight:700; font-size:clamp(18px,2.6vw,36px); line-height:1; letter-spacing:-.02em; text-transform:uppercase; transform:skewX(-7deg); text-wrap:pretty">A helping hand</h4>
+            <div data-chapbody="" style="flex:2 1 300px; min-width:0; display:flex; flex-direction:column; gap:clamp(12px,1.6vh,18px)">
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">In the final chapter, the plate starts to morph around you, almost like a helping hand when you need it the most.</p>
+              <p style="flex:1 1 auto; min-width:min(100%,280px); margin:0; font-size:clamp(14px,1.5vw,17px); line-height:1.65; text-wrap:pretty; opacity:.8">It catches your mistakes and helps you regain balance, but never takes over completely. It's there to support you, but keeping the balance is ultimately still in your hands.</p>
+            </div>
+          </div>
+        </div>
+
+        <p style="margin:0; max-width:16ch; font-weight:700; font-size:clamp(28px,4.4vw,62px); line-height:1; letter-spacing:-.03em; text-transform:uppercase; transform:skewX(-7deg); color:#8b8cf7" ref="{{ accent6Ref }}">The last percentage is you.</p>
+        <div style="display:flex; flex-wrap:wrap; align-items:baseline; gap:clamp(14px,2.4vw,32px); border-top:1px solid rgba(17,17,17,.14); padding-top:clamp(12px,1.8vh,18px)">
+          <span style="font-size:clamp(11px,1.15vw,13px); letter-spacing:.18em; text-transform:uppercase; opacity:.78; transform:skewX(-7deg)">Interaction</span>
+          <span style="font-size:clamp(11px,1.15vw,13px); letter-spacing:.18em; text-transform:uppercase; opacity:.78; transform:skewX(-7deg)">Art direction</span>
+          <span style="font-size:clamp(11px,1.15vw,13px); letter-spacing:.18em; text-transform:uppercase; opacity:.78; transform:skewX(-7deg)">Installation</span>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+<div style="position:relative; background:#05060a; isolation:isolate; overflow:hidden">
+
+<div style="position:relative; z-index:6; background:transparent; color:#f6f5f2; font-family:'Archivo', Helvetica, Arial, sans-serif; padding:clamp(64px,12vh,140px) clamp(20px,5vw,80px)">
+  <div style="display:flex; flex-direction:column; gap:clamp(24px,4vw,44px)">
+    <div style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:16px; align-items:baseline; border-bottom:1px solid rgba(246,245,242,.16); padding-bottom:clamp(12px,1.8vh,18px)">
+      <span style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.45">The design wall</span>
+      <span style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.45">2011 / 2025</span>
+    </div>
+    <h2 style="margin:0; font-weight:700; font-size:clamp(28px,4.4vw,62px); line-height:1.02; letter-spacing:-.03em; text-transform:uppercase; transform:skewX(-7deg); max-width:22ch">New and old,<br /><span ref="{{ accent2Ref }}" onClick="{{ scramble }}" style="color:#5b6bff; cursor:pointer">all <span ref="{{ scrWordRef }}" style="display:inline-block; animation:rohrShake 4s ease-in-out infinite">scrambled</span> <span ref="{{ scrUpRef }}" style="display:inline-block">up</span></span></h2>
+    <div ref="{{ wallFitRef }}" style="position:relative; z-index:40; width:100vw">
+      <div ref="{{ wallStageRef }}" style="position:relative; height:max(58vh, clamp(420px,70vw,900px)); overflow:hidden">
+      <div data-wall="" ref="{{ wallRef }}" style="position:absolute; inset:0">
+        <div style="box-shadow:0 12px 30px rgba(0,0,0,.6); flex:0 0 auto; position:relative; z-index:6; height:78%; margin:0 0 0 0; transform:rotate(-2.4deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1)">
+          <img src="uploads/wall-desigual-campaign.webp" alt="Desigual campaign grid" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+        </div>
+        <div style="box-shadow:0 12px 30px rgba(0,0,0,.6); flex:0 0 auto; position:relative; z-index:14; height:54%; margin:6% 0 0 -3.5%; transform:rotate(3.4deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1)">
+          <img src="uploads/wall-ths-4.webp" alt="THS home screen" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+        </div>
+        <div style="box-shadow:0 12px 30px rgba(0,0,0,.6); flex:0 0 auto; position:relative; z-index:9; height:62%; margin:-4% 0 0 -2.5%; transform:rotate(2.2deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1)">
+          <img src="uploads/wall-coaster.webp" alt="Coaster key visual" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+        </div>
+        <div style="box-shadow:0 12px 30px rgba(0,0,0,.6); flex:0 0 auto; position:relative; z-index:16; height:50%; margin:8% 0 0 -4%; transform:rotate(-3.6deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1)">
+          <img src="uploads/wall-mm-1.webp" alt="Maskinmässan start" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+        </div>
+        <div style="box-shadow:0 12px 30px rgba(0,0,0,.6); flex:0 0 auto; position:relative; z-index:18; height:56%; margin:2% 0 0 -3%; transform:rotate(2.2deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1)">
+          <img src="uploads/wall-collector-min.webp" alt="Collector Bank across devices" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+        </div>
+        <div style="box-shadow:0 12px 30px rgba(0,0,0,.6); flex:0 0 auto; position:relative; z-index:7; height:72%; margin:-2% 0 0 -3%; transform:rotate(3.2deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1)">
+          <img src="uploads/wall-desigual-pdp.webp" alt="Desigual product page" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+        </div>
+        <div style="box-shadow:0 12px 30px rgba(0,0,0,.6); flex:0 0 auto; position:relative; z-index:15; height:52%; margin:7% 0 0 -4%; transform:rotate(-2.6deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1)">
+          <img src="uploads/wall-ths-1.webp" alt="THS extras screen" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+        </div>
+        <div style="box-shadow:0 12px 30px rgba(0,0,0,.6); flex:0 0 auto; position:relative; z-index:13; height:48%; margin:-6% 0 0 -3.5%; transform:rotate(3.8deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1)">
+          <img src="uploads/wall-mm-2.webp" alt="Maskinmässan exhibitors" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+        </div>
+        <div style="box-shadow:0 12px 30px rgba(0,0,0,.6); flex:0 0 auto; position:relative; z-index:17; height:56%; margin:5% 0 0 -4%; transform:rotate(-3.2deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1)">
+          <img src="uploads/wall-ths-3.webp" alt="THS services screen" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+        </div>
+        <div style="box-shadow:0 12px 30px rgba(0,0,0,.6); flex:0 0 auto; position:relative; z-index:12; height:50%; margin:-5% 0 0 -3.5%; transform:rotate(2.6deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1)">
+          <img src="uploads/wall-mm-3.webp" alt="Maskinmässan 3D map" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+        </div>
+        <div style="box-shadow:0 12px 30px rgba(0,0,0,.6); flex:0 0 auto; position:relative; z-index:11; height:52%; margin:6% 0 0 -4%; transform:rotate(-2.2deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1)">
+          <img src="uploads/wall-ths-2.webp" alt="THS bookings screen" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+        </div>
+        <div style="box-shadow:0 12px 30px rgba(0,0,0,.6); flex:0 0 auto; position:relative; z-index:5; height:20%; margin:-3% 0 0 -3%; transform:rotate(-2.4deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1)">
+          <img src="uploads/wall-volvo-acc-1.webp" alt="Volvo XC60 accessories microsite" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+        </div>
+        <div style="box-shadow:0 12px 30px rgba(0,0,0,.6); flex:0 0 auto; position:relative; z-index:4; height:21%; margin:4% 0 0 -3%; transform:rotate(3deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1)">
+          <img src="uploads/wall-volvo-acc-2.webp" alt="Volvo C30 exterior styling" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+        </div>
+        <div style="box-shadow:0 12px 30px rgba(0,0,0,.6); flex:0 0 auto; position:relative; z-index:3; height:19%; margin:-4% 0 0 -3%; transform:rotate(-2.8deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1)">
+          <img src="uploads/wall-volvo-acc-3.webp" alt="Volvo C30 rear styling" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+        </div>
+        <div style="box-shadow:0 12px 30px rgba(0,0,0,.6); flex:0 0 auto; position:relative; z-index:8; height:66%; margin:-3% 0 0 -3%; transform:rotate(-2.8deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1)">
+          <img src="uploads/wall-jemtbil.webp" alt="JemtBil car matching concept" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+        </div>
+        <div style="flex:0 0 auto; position:relative; z-index:19; height:58%; margin:-4% 0 0 -3%; transform:rotate(-2.4deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1)">
+          <img src="uploads/wall-husqvarna-min.webp" alt="Husqvarna across devices" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+        </div>
+        <div style="box-shadow:0 12px 30px rgba(0,0,0,.6); flex:0 0 auto; position:relative; z-index:20; height:62%; margin:3% 0 0 -3%; transform:rotate(2.6deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1)">
+          <img src="uploads/wall-magna.webp" alt="Magna collective perception demo" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+        </div>
+        <div style="box-shadow:0 12px 30px rgba(0,0,0,.6); flex:0 0 auto; position:relative; z-index:1; height:72%; margin:-3% 0 0 -3%; transform:rotate(-2.6deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1)">
+          <img src="uploads/wall-volvo-ar-1.webp" alt="Volvo model picker, EX90 and EX30" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+        </div>
+        <div style="box-shadow:0 12px 30px rgba(0,0,0,.6); flex:0 0 auto; position:relative; z-index:22; height:60%; margin:5% 0 0 -3%; transform:rotate(3.2deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1)">
+          <img src="uploads/wall-volvo-ar-2.webp" alt="Volvo AR car placement" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+        </div>
+        <div style="box-shadow:0 12px 30px rgba(0,0,0,.6); flex:0 0 auto; position:relative; z-index:23; height:58%; margin:-4% 0 0 -3%; transform:rotate(-2.2deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1)">
+          <img src="uploads/wall-volvo-ar-3.webp" alt="Volvo AR placement guide" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+        </div>
+        <div style="box-shadow:0 12px 30px rgba(0,0,0,.6); flex:0 0 auto; position:relative; z-index:24; height:56%; margin:-3% 0 0 -3%; transform:rotate(-2.6deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1)">
+          <img src="uploads/wall-midman-1.webp" alt="Midman dealer dashboard" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+        </div>
+        <div style="box-shadow:0 12px 30px rgba(0,0,0,.6); flex:0 0 auto; position:relative; z-index:28; height:60%; margin:-4% 0 0 -3%; transform:rotate(3deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1)">
+          <img src="uploads/desigual-devices.webp" alt="Desigual across devices" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+        </div>
+        <div style="box-shadow:0 12px 30px rgba(0,0,0,.6); flex:0 0 auto; position:relative; z-index:29; height:54%; margin:5% 0 0 -3%; transform:rotate(-3.2deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1)">
+          <img src="uploads/gina-ecom.webp" alt="Gina Tricot e-commerce screens" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+        </div>
+        <div style="box-shadow:0 12px 30px rgba(0,0,0,.6); flex:0 0 auto; position:relative; z-index:27; height:56%; margin:4% 0 0 -3%; transform:rotate(-2.6deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1)">
+          <img src="uploads/forvia-masterpiece.webp" alt="Forvia Masterpiece custom HMI, CES 2024" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+        </div>
+        <div style="box-shadow:0 12px 30px rgba(0,0,0,.6); flex:0 0 auto; position:relative; z-index:26; height:58%; margin:-3% 0 0 -3%; transform:rotate(2.8deg); user-select:none; transition:transform .35s cubic-bezier(.2,.8,.2,1)">
+          <img src="uploads/port-gothenburg.webp" alt="Port of Gothenburg across devices" loading="lazy" decoding="async" draggable="false" style="height:100%; width:auto; display:block; pointer-events:none; user-select:none" />
+        </div>
+      </div>
+      </div>
+      <div style="display:flex; justify-content:flex-end; padding:clamp(10px,1.4vw,16px) clamp(20px,5vw,80px) 0">
+        <span onClick="{{ wallNext }}" style="display:none; font-size:clamp(9px,1vw,12px); letter-spacing:.16em; text-transform:uppercase; opacity:.45; cursor:pointer; user-select:none; transition:opacity .2s ease" style-hover="opacity:.9">Drag →</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="position:relative; background:#05060a; isolation:isolate; overflow:hidden">
+  <div style="position:absolute; inset:0; z-index:0; isolation:isolate; overflow:hidden; pointer-events:none">
+    <canvas data-goo="" ref="{{ canvas2Ref }}" style="position:absolute; inset:0; width:100%; height:100%; display:block"></canvas>
+    <div data-oil="mult" ref="{{ oil3Ref }}" style="position:absolute; inset:0; mix-blend-mode:multiply; background:linear-gradient(112deg,#f2ffe4,#a8f5e2 16%,#7fd9ff 36%,#8b8cf7 58%,#b276f0 78%,#e3d2ff); background-size:130% 130%; animation:rohrOil 22s ease-in-out infinite"></div>
+    <div data-oil="over" ref="{{ oil4Ref }}" style="position:absolute; inset:0; mix-blend-mode:overlay; opacity:.4; background:linear-gradient(28deg,#7fd9ff,#e3d2ff 30%,#f2ffe4 50%,#b276f0 80%,#7fd9ff); background-size:140% 140%; animation:rohrOil 34s ease-in-out infinite reverse"></div>
+    <div style="position:absolute; inset:0; background:linear-gradient(180deg,rgba(5,6,10,.9) 0%,rgba(5,6,10,.8) 40%,rgba(5,6,10,.84))"></div>
+  </div>
+
+<div style="position:relative; z-index:6; background:transparent; color:#f6f5f2; font-family:'Archivo', Helvetica, Arial, sans-serif; padding:clamp(64px,12vh,140px) clamp(20px,5vw,80px)">
+  <div style="display:flex; flex-direction:column; gap:clamp(28px,4vw,52px)">
+    <div style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:16px; align-items:baseline; border-bottom:1px solid rgba(246,245,242,.16); padding-bottom:clamp(12px,1.8vh,18px)">
+      <span style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.5">Animation</span>
+      <span style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.5">GIF / Loop &mdash; tap to play</span>
+    </div>
+    <h2 style="margin:0 0 calc(clamp(28px,4vw,52px) * -0.5) 0; font-weight:700; font-size:clamp(28px,4.4vw,62px); line-height:1.02; letter-spacing:-.03em; text-transform:uppercase; transform:skewX(-7deg); max-width:20ch">When keyframe animation was a <span ref="{{ accent4Ref }}" style="color:#5b6bff">thing<span style="display:inline-block; animation:rohrDotWave 1.4s cubic-bezier(.2,1.7,.3,1) infinite">.</span><span style="display:inline-block; animation:rohrDotWave 1.4s cubic-bezier(.2,1.7,.3,1) -.466s infinite">.</span><span style="display:inline-block; animation:rohrDotWave 1.4s cubic-bezier(.2,1.7,.3,1) -.933s infinite">.</span></span></h2>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr)); gap:clamp(20px,3vw,48px); align-items:start">
+      <p style="margin:0; max-width:62ch; font-size:clamp(14px,1.4vw,17px); line-height:1.7; text-wrap:pretty; opacity:.72">Years of After Effects. Pure animation work is rarer now, but the craft carries: in any interface, small motion details guide the user, set a mood, and quietly signal quality.</p>
+      <p style="margin:0; max-width:52ch; font-size:clamp(13px,1.2vw,15px); line-height:1.7; text-wrap:pretty; opacity:.55">The example below is from a Stockholm Card promotion that ran on screens across town.</p>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr)); gap:clamp(12px,1.6vw,20px)">
+      <img data-gif="uploads/loop-bike.gif" src="uploads/loop-bike-poster.webp" alt="Bike loop animation" loading="lazy" decoding="async" style="display:block; width:100%; aspect-ratio:4/3; object-fit:cover; cursor:pointer" />
+      <img data-gif="uploads/loop-guards.gif" src="uploads/loop-guards-poster.webp" alt="Palace guards loop animation" loading="lazy" decoding="async" style="display:block; width:100%; aspect-ratio:4/3; object-fit:cover; cursor:pointer" />
+      <img data-gif="uploads/loop-transit.gif" src="uploads/loop-transit-poster.webp" alt="Transit vehicles loop animation" loading="lazy" decoding="async" style="display:block; width:100%; aspect-ratio:4/3; object-fit:cover; cursor:pointer" />
+
+      <img data-gif="uploads/loop-type.gif" src="uploads/loop-type-poster.webp" alt="Diffuse type loop animation" loading="lazy" decoding="async" style="display:block; width:100%; aspect-ratio:4/3; object-fit:contain; cursor:pointer" />    </div>
+  </div>
+</div>
+
+<div style="position:relative; z-index:4; background:transparent; color:#f6f5f2; font-family:'Archivo', Helvetica, Arial, sans-serif; padding:clamp(56px,14vh,180px) clamp(20px,5vw,80px) clamp(24px,4vh,40px)">
+  
+
+
+  <div style="position:relative; z-index:2; display:flex; flex-direction:column; gap:clamp(28px,5vh,56px)">
+    <div ref="{{ mugWrapRef }}" style="user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; position:absolute; z-index:20; right:clamp(20px,5vw,80px); top:clamp(90px,16vh,180px); width:clamp(120px,17vw,260px); user-select:none; animation:rohrFloaty 17s ease-in-out infinite">
+      <div ref="{{ steamRef }}" style="position:absolute; left:16%; right:22%; bottom:88%; height:135%; pointer-events:none">
+        <div style="position:absolute; left:8%; bottom:0; width:34%; height:100%; border-radius:50% 50% 40% 40%; background:radial-gradient(60% 70% at 50% 90%, rgba(255,255,255,.82), rgba(255,255,255,.18) 55%, rgba(255,255,255,0) 78%); mix-blend-mode:screen; animation:rohrSteam 5.2s ease-out infinite"></div>
+        <div style="position:absolute; left:34%; bottom:0; width:38%; height:100%; border-radius:50% 50% 40% 40%; background:radial-gradient(60% 70% at 50% 90%, rgba(255,255,255,.76), rgba(255,255,255,.16) 55%, rgba(255,255,255,0) 78%); mix-blend-mode:screen; animation:rohrSteam 6.4s ease-out .9s infinite"></div>
+        <div style="position:absolute; left:58%; bottom:0; width:32%; height:100%; border-radius:50% 50% 40% 40%; background:radial-gradient(60% 70% at 50% 90%, rgba(255,255,255,.68), rgba(255,255,255,.14) 55%, rgba(255,255,255,0) 78%); mix-blend-mode:screen; animation:rohrSteam 7.1s ease-out 2.1s infinite"></div>
+      </div>
+      <div ref="{{ splashRef }}" style="position:absolute; left:0; right:0; top:-14%; height:60%; pointer-events:none; z-index:3">
+        <div style="position:absolute; left:28%; top:26%; width:9px; height:9px; border-radius:60% 40% 55% 45%; background:#d79a5c; box-shadow:0 0 8px rgba(215,154,92,.55); opacity:0; pointer-events:none; --dx:-74px; --dy:-52px; --fy:150px"></div>
+        <div style="position:absolute; left:36%; top:20%; width:6px; height:6px; border-radius:60% 40% 55% 45%; background:#d79a5c; box-shadow:0 0 8px rgba(215,154,92,.55); opacity:0; pointer-events:none; --dx:-34px; --dy:-92px; --fy:220px"></div>
+        <div style="position:absolute; left:45%; top:24%; width:11px; height:11px; border-radius:60% 40% 55% 45%; background:#d79a5c; box-shadow:0 0 8px rgba(215,154,92,.55); opacity:0; pointer-events:none; --dx:10px; --dy:-74px; --fy:118px"></div>
+        <div style="position:absolute; left:53%; top:28%; width:5px; height:5px; border-radius:60% 40% 55% 45%; background:#d79a5c; box-shadow:0 0 8px rgba(215,154,92,.55); opacity:0; pointer-events:none; --dx:62px; --dy:-46px; --fy:196px"></div>
+        <div style="position:absolute; left:33%; top:30%; width:7px; height:7px; border-radius:60% 40% 55% 45%; background:#d79a5c; box-shadow:0 0 8px rgba(215,154,92,.55); opacity:0; pointer-events:none; --dx:-96px; --dy:-18px; --fy:96px"></div>
+        <div style="position:absolute; left:49%; top:18%; width:4px; height:4px; border-radius:60% 40% 55% 45%; background:#d79a5c; box-shadow:0 0 8px rgba(215,154,92,.55); opacity:0; pointer-events:none; --dx:38px; --dy:-104px; --fy:262px"></div>
+      </div>
+      <img ref="{{ mugRef }}" onPointerDown="{{ mugDown }}" onContextMenu="{{ preventMugMenu }}" src="uploads/mug.webp" alt="Röhr mug" loading="lazy" decoding="async" draggable="false" style="position:relative; width:100%; height:auto; display:block; cursor:grab; touch-action:none; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; -webkit-user-drag:none; transform:rotate(3deg); transform-origin:70% 85%; filter:drop-shadow(0 18px 34px rgba(0,0,0,.55)); animation:rohrMugShake 4s ease-in-out infinite" />
+      <div ref="{{ grabHintRef }}" style="position:absolute; left:0; right:0; top:calc(100% + clamp(8px,1.2vh,14px)); text-align:center; padding-right:clamp(24px,3.5vw,54px); font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.45; pointer-events:none; transition:opacity .5s ease">Grab me</div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:16px; align-items:baseline; border-bottom:1px solid rgba(246,245,242,.16); padding-bottom:clamp(12px,1.8vh,18px)">
+      <span style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.7" id="contact">04. Contact</span>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:clamp(6px,1vh,12px)">
+      <span style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.45">Your time here</span>
+      <div style="display:flex; align-items:stretch; gap:clamp(5px,.7vw,9px); transform:skewX(-7deg); perspective:600px; align-self:flex-start">
+        <div ref="{{ t0Ref }}" style="position:relative; box-shadow:inset 0 0 0 1px rgba(246,245,242,.28); overflow:hidden; color:#f6f5f2; font-weight:700; font-variant-numeric:tabular-nums; font-size:clamp(40px,5.6vw,78px); line-height:1; letter-spacing:-.03em; padding:clamp(8px,1.2vh,16px) clamp(9px,1.2vw,16px); min-width:.72em; text-align:center; transform-origin:50% 50%">{{ d0 }}</div>
+        <div ref="{{ t1Ref }}" style="position:relative; box-shadow:inset 0 0 0 1px rgba(246,245,242,.28); overflow:hidden; color:#f6f5f2; font-weight:700; font-variant-numeric:tabular-nums; font-size:clamp(40px,5.6vw,78px); line-height:1; letter-spacing:-.03em; padding:clamp(8px,1.2vh,16px) clamp(9px,1.2vw,16px); min-width:.72em; text-align:center; transform-origin:50% 50%">{{ d1 }}</div>
+        <div style="display:flex; align-items:center; padding:0 clamp(2px,.3vw,5px); font-weight:700; font-size:clamp(40px,5.6vw,78px); line-height:1; color:#f6f5f2; opacity:.5">:</div>
+        <div ref="{{ t2Ref }}" style="position:relative; box-shadow:inset 0 0 0 1px rgba(246,245,242,.28); overflow:hidden; color:#f6f5f2; font-weight:700; font-variant-numeric:tabular-nums; font-size:clamp(40px,5.6vw,78px); line-height:1; letter-spacing:-.03em; padding:clamp(8px,1.2vh,16px) clamp(9px,1.2vw,16px); min-width:.72em; text-align:center; transform-origin:50% 50%">{{ d2 }}</div>
+        <div ref="{{ t3Ref }}" style="position:relative; box-shadow:inset 0 0 0 1px rgba(246,245,242,.28); overflow:hidden; color:#f6f5f2; font-weight:700; font-variant-numeric:tabular-nums; font-size:clamp(40px,5.6vw,78px); line-height:1; letter-spacing:-.03em; padding:clamp(8px,1.2vh,16px) clamp(9px,1.2vw,16px); min-width:.72em; text-align:center; transform-origin:50% 50%">{{ d3 }}</div>
+      </div>
+      <h2 style="margin:0; font-family:'Archivo', Helvetica, Arial, sans-serif; font-weight:700; font-size:clamp(20px,2.6vw,38px); line-height:1.1; letter-spacing:-.02em; text-transform:uppercase; color:#5b6bff; transform:skewX(-7deg); max-width:22ch; min-height:2.2em; text-wrap:pretty" ref="{{ accent3Ref }}">{{ clockCopy }}</h2>
+    </div>
+
+    <a href="mailto:hello@rikardrohr.com" onPointerEnter="{{ scrambleEmail }}" ref="{{ emailRef }}" data-accent="1" style="align-self:flex-start; color:#f6f5f2; font-size:clamp(20px,3.4vw,44px); font-weight:500; letter-spacing:-.02em; line-height:1.1; font-variant-numeric:tabular-nums; transition:color .25s ease" style-hover="color:#5b6bff">hello@rikardrohr.com</a>
+
+    <div style="display:flex; align-items:center; flex-wrap:wrap; gap:14px; margin-top:clamp(40px,10vh,120px); margin-bottom:calc(clamp(16px,2.5vh,24px) - clamp(28px,5vh,56px))">
+      <span style="width:22px; height:22px; flex:0 0 auto; border-radius:50%; box-shadow:0 0 0 1.5px rgba(246,245,242,.6); background:linear-gradient(90deg,#5b6bff,#c46bff 14%,#ff5f6d 28%,#ffa14a 42%,#ffe94a 56%,#6ef07f 72%,#3ad1ff 86%,#5b6bff)"></span>
+      <div ref="{{ trackFRef }}" onPointerDown="{{ onTintDownF }}" style="position:relative; width:min(52vw,240px); height:8px; border-radius:4px; cursor:ew-resize; touch-action:none; background:linear-gradient(90deg,#5b6bff,#c46bff 14%,#ff5f6d 28%,#ffa14a 42%,#ffe94a 56%,#6ef07f 72%,#3ad1ff 86%,#5b6bff)">
+        <div ref="{{ knobFRef }}" style="position:absolute; top:-5px; left:0; width:3px; height:18px; margin-left:-1.5px; border-radius:2px; background:#fff; pointer-events:none"></div>
+        <div aria-hidden="true" style="position:absolute; top:-18px; right:-14px; bottom:-18px; left:-14px; z-index:-1"></div>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:clamp(20px,3vw,44px); margin-left:auto">
+      <a href="https://www.linkedin.com/in/rikardrohr/" target="_blank" rel="noopener" style="display:flex; align-items:center; gap:10px; color:#f6f5f2; font-size:clamp(11px,1vw,13px); letter-spacing:.1em; text-transform:uppercase; line-height:1">
+        <img src="uploads/linkedin.webp" alt="" style="width:20px; height:20px; object-fit:contain; display:block; flex:none" />
+        <span style="line-height:1; display:block; transition:color .25s ease" style-hover="color:#c9f6ff">LinkedIn</span>
+      </a>
+      </div>
+    </div>
+    <div style="border-top:1px solid rgba(246,245,242,.18); margin-top:0; padding-top:clamp(16px,2.5vh,24px); display:flex; flex-wrap:wrap; justify-content:space-between; gap:12px; font-size:clamp(10px,1.05vw,12px); letter-spacing:.16em; text-transform:uppercase; opacity:.45">
+      <span>Rikard Röhr</span>
+      <span>Digital product design · UX · Art direction</span>
+      <span>© 2026</span>
+    </div>
+  </div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  constructor(p){
+    super(p);
+    this.canvasRef = React.createRef();
+    this.fieldRef = React.createRef();
+    this.wordRef = React.createRef();
+    this.canvas2Ref = React.createRef();
+    this.oil1Ref = React.createRef(); this.oil2Ref = React.createRef();
+    this.oil3Ref = React.createRef(); this.oil4Ref = React.createRef();
+    this.trackRef = React.createRef(); this.knobRef = React.createRef();
+    this.tintWrapRef = React.createRef(); this.pickCopyRef = React.createRef(); this.scrWordRef = React.createRef(); this.scrUpRef = React.createRef(); this.capTxtRef = React.createRef(); this.wordTxtRef = React.createRef(); this.capWrapRef = React.createRef(); this.accentRef = React.createRef(); this.accent2Ref = React.createRef(); this.accent3Ref = React.createRef(); this.accent4Ref = React.createRef(); this.accent5Ref = React.createRef(); this.captionRef = React.createRef(); this.dotRef = React.createRef(); this.dotPos = { x: 0, y: 0 };
+    // the loader already rolled the session hue before first paint — reuse it so the
+    // loading screen and the blob field are the same colour
+    this.hue = p.hue ?? (window.__rohrHue != null ? window.__rohrHue : Math.floor(Math.random() * 360));
+    this.portraitRef = React.createRef();
+    this.portraitWrapRef = React.createRef();
+    this.helloRef = React.createRef();
+    this.scrollCueRef = React.createRef();
+    this.galleryRef = React.createRef();
+    this.galleryFitRef = React.createRef();
+    this.gallery2Ref = React.createRef();
+    this.wallRef = React.createRef();
+    this.wallStageRef = React.createRef();
+    this.mugRef = React.createRef(); this.clinkRef = React.createRef(); this.splashRef = React.createRef(); this.mugWrapRef = React.createRef();
+    this.steamRef = React.createRef();
+    this.mugPos = { x: 0, y: 0 };
+    this.trackFRef = React.createRef(); this.knobFRef = React.createRef();
+    this.wall2Ref = React.createRef();
+    this.wall2FitRef = React.createRef();
+    this.operaFirstRef = React.createRef();
+    this.emailRef = React.createRef();
+    this.accent6Ref = React.createRef(); this.accent7Ref = React.createRef(); this.accent8Ref = React.createRef(); this.accent9Ref = React.createRef(); this.accent10Ref = React.createRef(); this.accent11Ref = React.createRef();
+    this.grabHintRef = React.createRef();
+    this.mugTintRef = React.createRef();
+    this.t0Ref = React.createRef(); this.t1Ref = React.createRef(); this.t2Ref = React.createRef(); this.t3Ref = React.createRef();
+    this.digits = () => { const s = this.state.secs || 0; return (String(Math.floor(s / 60)).padStart(2, '0') + String(s % 60).padStart(2, '0')).split(''); };
+    this.wallFitRef = React.createRef();
+    this.gallery2FitRef = React.createRef();
+    this.fitOne = (el) => {
+      if(!el) return;
+      el.style.marginLeft = '0px';
+      const left = el.getBoundingClientRect().left;
+      const cw = document.documentElement.clientWidth;
+      el.style.marginLeft = (-left) + 'px';
+      el.style.width = cw + 'px';
+    };
+    this.galleryFit = () => { this.fitOne(this.galleryFitRef.current); this.fitOne(this.gallery2FitRef.current); this.fitOne(this.wallFitRef.current); this.fitOne(this.wall2FitRef.current); this.layoutRing(); };
+    this.advance = (g) => {
+      if(!g) return;
+      const k = g.children[1];
+      const step = k ? k.offsetLeft - g.children[0].offsetLeft : g.clientWidth;
+      const atEnd = g.scrollLeft + g.clientWidth >= g.scrollWidth - 8;
+      g.scrollTo({ left: atEnd ? 0 : g.scrollLeft + step, behavior: 'smooth' });
+    };
+    this.galleryNext = () => this.advance(this.galleryRef.current);
+    this.gallery2Next = () => this.advance(this.gallery2Ref.current);
+    this.wall2Next = () => { const g = this.wall2Ref.current; if(!g) return; const atEnd = g.scrollLeft + g.clientWidth >= g.scrollWidth - 8; g.scrollTo({ left: atEnd ? 0 : g.scrollLeft + g.clientWidth * .7, behavior: 'smooth' }); };
+    this.layoutRing = (animate) => {
+      const stage = this.wallStageRef.current, world = this.wallRef.current;
+      if(!stage || !world) return;
+      const kids = Array.from(world.children);
+      const W = stage.clientWidth, H = stage.clientHeight;
+      if(!W || !H) return;
+      const n = kids.length;
+      const narrow = W < 760;
+      const Rx = W * (narrow ? 0.46 : 0.40), Ry = H * (narrow ? 0.42 : 0.38);
+      let s = this._wallSeed || 20260822;
+      const rnd = () => (s = (s * 1664525 + 1013904223) % 4294967296) / 4294967296;
+      kids.forEach((el, i) => {
+        // sunflower fill: even coverage of the whole disc, not just the rim
+        const k = Math.sqrt((i + 0.5) / n);
+        const a2 = i * 2.399963 + (rnd() - 0.5) * 0.5;
+        el.dataset.hx = W / 2 + Math.cos(a2) * Rx * k;
+        el.dataset.hy = H / 2 + Math.sin(a2) * Ry * k;
+        if(!animate || el.dataset.cx === undefined){ el.dataset.cx = el.dataset.hx; el.dataset.cy = el.dataset.hy; }
+        el.style.position = 'absolute';
+        el.style.margin = '0';
+        const src = (el.querySelector('img') || {}).src || '';
+        const wide = /1787479313229|1787479345199|1787479409352|12\.02\.59/.test(src);
+        const big = wide ? 0.62 : (/desigual-campaign|volvo-ar-/.test(src) ? 1.45 : (/volvo-acc-/.test(src) ? 0.5 : 1));
+        el.style.height = Math.round(Math.min(W, H) * (narrow ? 0.13 + rnd() * 0.09 : 0.19 + rnd() * 0.14) * big) + 'px';
+        el.style.zIndex = String(5 + Math.round(rnd() * 30));
+        const rot = ((rnd() - 0.5) * 16).toFixed(1);
+        const h0 = parseFloat(el.style.height) || 1;
+        const zi = 5 + Math.round(220 / h0) + Math.round(rnd() * 4);
+        el.style.zIndex = String(zi);
+        el.style.transform = 'rotate(' + rot + 'deg)';
+        el.style.transition = 'transform .35s cubic-bezier(.2,.8,.2,1)';
+        el.style.cursor = 'grab';
+        el.style.touchAction = 'none';
+        el.dataset.rest = String(zi);
+        el.onpointerenter = () => { if(this._dragCard) return; el.style.zIndex = '400'; el.style.transform = 'rotate(0deg) scale(1.25)'; };
+        el.onpointerleave = () => { if(this._dragCard === el) return; el.style.zIndex = el.dataset.rest; el.style.transform = 'rotate(' + rot + 'deg)'; };
+        el.onpointerdown = (ev) => {
+          this._dragCard = el;
+          const grow = ev.pointerType === 'touch';
+          el.style.cursor = 'grabbing';
+          el.style.zIndex = '500';
+          el.style.transition = 'transform .2s ease';
+          el.style.transform = 'rotate(0deg) scale(' + (grow ? 1.25 : 1.08) + ')';
+          const sx = ev.clientX, sy = ev.clientY;
+          const ox = +el.dataset.cx, oy = +el.dataset.cy;
+          let spin = 0, lastX = sx, lastT = performance.now();
+          const move = (e2) => {
+            const now = performance.now(), dt = now - lastT;
+            if(dt > 0){
+              const v = (e2.clientX - lastX) / dt;
+              spin = Math.max(-15, Math.min(15, spin * 0.55 + v * 9));
+              lastT = now; lastX = e2.clientX;
+            }
+            el.dataset.cx = el.dataset.hx = Math.max(20, Math.min(W - 20, ox + (e2.clientX - sx)));
+            el.dataset.cy = el.dataset.hy = Math.max(20, Math.min(H - 20, oy + (e2.clientY - sy)));
+            el.style.transition = 'none';
+            el.style.transform = 'rotate(' + spin.toFixed(1) + 'deg) scale(' + (grow ? 1.25 : 1.08) + ')';
+            this.runField(kids, W, H);
+          };
+          const up = () => {
+            window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up);
+            this._dragCard = null;
+            this.runField(kids, W, H);
+            el.style.cursor = 'grab';
+            this._topZ = (this._topZ || 300) + 1;
+            el.dataset.rest = String(this._topZ);
+            el.style.zIndex = el.dataset.rest;
+            el.style.transition = 'transform .5s cubic-bezier(.2,1.5,.35,1)';
+            el.style.transform = 'rotate(' + (rot + spin * 0.4).toFixed(1) + 'deg)';
+            clearTimeout(el._settleT);
+            el._settleT = setTimeout(() => {
+              el.style.transition = 'transform .35s cubic-bezier(.2,.8,.2,1)';
+              el.style.transform = 'rotate(' + rot + 'deg)';
+            }, 260);
+          };
+          window.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
+          ev.preventDefault();
+        };
+      });
+      const place = () => kids.forEach(el => {
+        const m = 26;
+        const r = el.getBoundingClientRect();
+        const ew = Math.max(r.width, el.offsetWidth), eh = Math.max(r.height, el.offsetHeight);
+        if(!ew || !eh) return;
+        el.style.left = Math.max(m, Math.min(W - ew - m, +el.dataset.cx - ew / 2)) + 'px';
+        el.style.top = Math.max(m, Math.min(H - eh - m, +el.dataset.cy - eh / 2)) + 'px';
+      });
+      this._placeWall = place;
+      if(animate) this.runField(kids, W, H); else { requestAnimationFrame(place); setTimeout(place, 400); }
+      kids.forEach(el => { const im = el.querySelector('img'); if(im && !im.complete) im.addEventListener('load', place, { once: true }); });
+    };
+    this.runField = (kids, W, H) => {
+      if(this._fieldRaf) return;
+      const step = () => {
+        const drag = this._dragCard;
+        let moving = false;
+        let dx0 = 0, dy0 = 0, rad = 0;
+        if(drag){
+          dx0 = +drag.dataset.cx; dy0 = +drag.dataset.cy;
+          rad = Math.max(drag.offsetWidth, drag.offsetHeight) * 0.95;
+        }
+        kids.forEach(el => {
+          if(el === drag) return;
+          const hx = +el.dataset.hx, hy = +el.dataset.hy;
+          let tx = hx, ty = hy;
+          if(drag){
+            const vx = hx - dx0, vy = hy - dy0;
+            const dist = Math.hypot(vx, vy) || 0.001;
+            if(dist < rad){
+              const t = 1 - dist / rad;
+              const strength = rad * 0.62 * t * t;
+              tx = hx + vx / dist * strength;
+              ty = hy + vy / dist * strength;
+            }
+          }
+          const cx = +el.dataset.cx, cy = +el.dataset.cy;
+          const nx = cx + (tx - cx) * 0.085, ny = cy + (ty - cy) * 0.085;
+          if(Math.abs(nx - cx) > 0.2 || Math.abs(ny - cy) > 0.2) moving = true;
+          el.dataset.cx = nx; el.dataset.cy = ny;
+        });
+        if(this._placeWall) this._placeWall();
+        if(drag || moving){ this._fieldRaf = requestAnimationFrame(step); }
+        else { this._fieldRaf = null; }
+      };
+      this._fieldRaf = requestAnimationFrame(step);
+    };
+    this.wallNext = () => { const g = this.wallRef.current; if(!g) return; const atEnd = g.scrollLeft + g.clientWidth >= g.scrollWidth - 8; g.scrollTo({ left: atEnd ? 0 : g.scrollLeft + g.clientWidth * .7, behavior: 'smooth' }); };
+
+    this.scrollY = 0;
+  }
+  renderVals(){
+    return { oil1Ref: this.oil1Ref, oil2Ref: this.oil2Ref, oil3Ref: this.oil3Ref, oil4Ref: this.oil4Ref,
+      trackRef: this.trackRef, knobRef: this.knobRef, tintWrapRef: this.tintWrapRef, accentRef: this.accentRef, accent2Ref: this.accent2Ref, accent3Ref: this.accent3Ref, accent4Ref: this.accent4Ref, accent5Ref: this.accent5Ref, captionRef: this.captionRef, dotRef: this.dotRef,
+      onDotDown: (e) => this.dotDown(e),
+      pickCopyRef: this.pickCopyRef,
+      onPickDown: (e) => e.stopPropagation(),
+      onPickCopy: (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if(!this.state.tintOpen) this.setState({ tintOpen: true });
+        this.framePicker();
+      },
+      // The hero swallows pointerdown for its drag, which killed the anchor's click.
+      // Keep the href for semantics but drive the scroll here.
+      onCueDown: (e) => e.stopPropagation(),
+      onCueClick: (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const t = document.getElementById('about');
+        if(!t) return;
+        const pad = Math.min(90, Math.max(40, (window.innerHeight || 800) * 0.08));
+        window.scrollTo({ top: (window.scrollY || 0) + t.getBoundingClientRect().top - pad, behavior: 'smooth' });
+      },
+      tintOpen: !!this.state.tintOpen, tintClosed: !this.state.tintOpen,
+      toggleTint: () => this.setState(s => ({ tintOpen: !s.tintOpen })),
+      onTintDown: (e) => this.tintDown(e),
+      onTintDownF: (e) => this.tintDown(e, 'f'),
+      trackFRef: this.trackFRef, knobFRef: this.knobFRef,
+      onGalleryDown: (e) => this.galleryDown(e),
+      gallery2Ref: this.gallery2Ref, gallery2FitRef: this.gallery2FitRef, gallery2Next: this.gallery2Next,
+      wallRef: this.wallRef, wallFitRef: this.wallFitRef, wallNext: this.wallNext,
+      wallStageRef: this.wallStageRef,
+      scrWordRef: this.scrWordRef, scrUpRef: this.scrUpRef, capTxtRef: this.capTxtRef, wordTxtRef: this.wordTxtRef, capWrapRef: this.capWrapRef,
+      scramble: () => { this._wallSeed = Math.floor(Math.random() * 4294967296); this.layoutRing(true); this.scrambleWord(); },
+      clock: (() => { const s = this.state.secs || 0; return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); })(),
+      d0: this.digits()[0], d1: this.digits()[1], d2: this.digits()[2], d3: this.digits()[3],
+      t0Ref: this.t0Ref, t1Ref: this.t1Ref, t2Ref: this.t2Ref, t3Ref: this.t3Ref,
+      clockCopy: (() => {
+        const s = this.state.secs || 0;
+        // every 30s to 5min, every minute to 10min, every 5min to 100min
+        const L = [
+          'Straight to the bottom. That was quick, then. Coffee?',
+          'Thirty seconds. Faster than the tram on a good day. Coffee?',
+          'A full minute. Properly thorough of you. Coffee?',
+          'Ninety seconds. This is a visit now, not a drive-by. Coffee?',
+          'Two minutes. The bounce rate just bounced back. Coffee?',
+          'Two and a half. I am flattered. Do go on. Coffee?',
+          'Three minutes. You have read more of this than I have. Coffee?',
+          'Three and a half. The kettle is already on. Coffee?',
+          'Four minutes. Longer than a Gothenburg summer. Coffee?',
+          'Four and a half. You are committed. I respect it. Coffee?',
+          'Five minutes. Officially a review. Verdict: needs coffee?',
+          'Six minutes. Every pixel seen twice. They are getting shy. Coffee?',
+          'Seven minutes. Are we colleagues now? I take mine black. Coffee?',
+          'Eight minutes. The invoice writes itself. Payable in fika. Coffee?',
+          'Nine minutes. This is a hangout. Bring an umbrella, it rains here. Coffee?',
+          'Ten minutes. You have outlasted the Gothenburg sunshine. Coffee?',
+          'Fifteen minutes. Genuinely, hello. Are you well? Coffee?',
+          'Twenty minutes. The blobs know your name. You are a regular. Coffee?',
+          'Twenty-five. You have outlasted my attention span by twenty-four. Coffee?',
+          'Half an hour. Around here that is two separate weathers. Coffee?',
+          'Thirty-five. The mug stopped counting. It is only ceramic. Coffee?',
+          'Forty minutes. You are in the credits now. Special thanks. Coffee?',
+          'Forty-five. First half done. Glenn would be proud. Coffee?',
+          'Fifty minutes. Blink twice if you need water. Or milk. Coffee?',
+          'Fifty-five. This tab is furniture now. Rent is one coffee?',
+          'One hour. Personal best for both of us. No medal, only coffee?',
+          'Sixty-five minutes. Be honest, did you leave the tab open? Coffee?',
+          'Seventy minutes. I hope this is on the clock. Bill them for the coffee?',
+          'Seventy-five. Sincerely: touch grass. It is wet, mind you. Coffee?',
+          'Eighty minutes. The steam is decorative, sorry. The coffee would not be?',
+          'Eighty-five. I am running out of jokes. That is a first. Coffee?',
+          'Ninety minutes. Full time, nobody scored. Coffee?',
+          'Ninety-five. Extra time, and still no fika. Coffee?',
+          'Over an hour and a half. Let us get actual coffee. I am buying.'
+        ];
+        let i;
+        if(s < 300) i = Math.floor(s / 30);              // 0-9
+        else if(s < 600) i = 10 + Math.floor((s - 300) / 60);  // 10-14
+        else i = Math.min(L.length - 1, 15 + Math.floor((s - 600) / 300));
+        return L[i];
+      })(), mugRef: this.mugRef, clinkRef: this.clinkRef, splashRef: this.splashRef, mugWrapRef: this.mugWrapRef, steamRef: this.steamRef,
+      mugDown: (e) => this.mugDown(e),
+      preventMugMenu: (e) => e.preventDefault(),
+      cheers: () => {
+        const m = this.mugRef.current, c = this.clinkRef.current;
+        if(m){ m.style.animation = 'none'; void m.offsetWidth; m.style.animation = 'rohrCheers .8s cubic-bezier(.12,.85,.25,1)'; }
+        const sp = this.splashRef.current;
+        if(sp) Array.from(sp.children).forEach((d, i) => { d.style.animation = 'none'; void d.offsetWidth; d.style.animation = 'rohrDrop ' + (0.9 + i * 0.11) + 's linear ' + (0.12 + i * 0.035) + 's'; });
+      },
+      wall2Ref: this.wall2Ref, wall2FitRef: this.wall2FitRef, wall2Next: this.wall2Next, operaFirstRef: this.operaFirstRef,
+      showBottomBar: () => this.showBottomBar(),
+      emailRef: this.emailRef, scrambleEmail: () => this.scrambleEmail(),
+      accent6Ref: this.accent6Ref, accent7Ref: this.accent7Ref, accent8Ref: this.accent8Ref, accent9Ref: this.accent9Ref, accent10Ref: this.accent10Ref, accent11Ref: this.accent11Ref, grabHintRef: this.grabHintRef, mugTintRef: this.mugTintRef,
+      canvasRef: this.canvasRef, canvas2Ref: this.canvas2Ref, fieldRef: this.fieldRef, wordRef: this.wordRef, portraitRef: this.portraitRef, portraitWrapRef: this.portraitWrapRef, helloRef: this.helloRef, scrollCueRef: this.scrollCueRef, galleryRef: this.galleryRef, galleryFitRef: this.galleryFitRef, galleryNext: this.galleryNext };
+  }
+  componentDidUpdate(){
+    if(this.state.tintOpen) this.syncCap();
+    this.applyHue();
+    const dg = this.digits(), prev = this._prevDigits || [];
+    this._prevDigits = dg;
+    const cc = this.accent3Ref.current;
+    if(cc && cc.textContent !== this._lastCopy){
+      this._lastCopy = cc.textContent;
+      cc.style.animation = 'none'; void cc.offsetWidth;
+      cc.style.animation = 'rohrCopySwap .45s cubic-bezier(.2,.9,.25,1)';
+    }
+    if(this.state.tintOpen) this.stopHops(); else this.scheduleHop();
+    const d = this.dotRef.current;
+    const w = this.tintWrapRef.current;
+    // Queue the glides, then do all reads and all writes: exactly one reflow.
+    const glideQ = [];
+    const glide = (el) => { if(glideQ.indexOf(el) < 0) glideQ.push(el); };
+    const flushGlide = () => {
+      if(!glideQ.length) return;
+      const st = glideQ.map(el => {
+        const cs = getComputedStyle(el);
+        return { el, tr: cs.translate, tf: cs.transform };
+      });
+      // The track is the element you grab. Gliding it means the first touch lands on a
+      // moving target whose geometry is still changing, which read as "initializing"
+      // on mobile — settle those instantly instead.
+      const grab = [this.trackRef.current, this.trackFRef.current];
+      for(const s of st) s.instant = grab.indexOf(s.el) >= 0;
+      for(const s of st){
+        s.el.style.animation = 'none';
+        s.el.style.translate = (s.tr && s.tr !== 'none') ? s.tr : '0px';
+        if(s.tf && s.tf !== 'none') s.el.style.transform = s.tf;
+      }
+      void document.body.offsetWidth;
+      for(const s of st){
+        if(s.instant){
+          s.el.style.transition = '';
+          s.el.style.translate = '0 0';
+          if(s.tf && s.tf !== 'none') s.el.style.transform = 'none';
+          continue;
+        }
+        s.el.style.transition = 'translate .3s cubic-bezier(.2,.8,.2,1), transform .3s cubic-bezier(.2,.8,.2,1)';
+        s.el.style.translate = '0 0';
+        if(s.tf && s.tf !== 'none') s.el.style.transform = 'none';
+        clearTimeout(s.el._glideT);
+        s.el._glideT = setTimeout(() => { s.el.style.transition = ''; }, 340);
+      }
+      glideQ.length = 0;
+      this._knobM = null; // geometry just changed — drop the cached knob mapping
+    };
+    if(d){
+      const open = !!this.state.tintOpen;
+      const setAnim = (el, on) => {
+        if(el.dataset.animOrig === undefined) el.dataset.animOrig = el.style.animation || '';
+        el.style.animation = on ? el.dataset.animOrig : 'none';
+      };
+      setAnim(d, !open);
+      if(open) glide(d); else d.style.translate = '';
+      if(!open && this._wasOpen){
+        Array.from(d.children).forEach(ch => { setAnim(ch, false); });
+        void d.offsetWidth;
+        Array.from(d.children).forEach(ch => { setAnim(ch, true); });
+      }
+      this._wasOpen = open;
+      Array.from(d.children).forEach(ch => { ch.style.animationPlayState = open ? 'paused' : 'running'; ch.style.opacity = open ? '0' : ''; });
+    }
+    if(w) Array.from(w.children).forEach(ch => {
+      if(ch === d) return;
+      if(ch.dataset.animOrig === undefined) ch.dataset.animOrig = ch.style.animation || '';
+      if(this.state.tintOpen) glide(ch);
+      else { ch.style.animation = ch.dataset.animOrig; ch.style.translate = ''; }
+    });
+    if(d && this.state.tintOpen) d.style.transform = 'none';
+    if(w){
+      if(this.state.tintOpen){ glide(w); w.style.margin = '0'; }
+      else {
+        w.style.removeProperty('animation');
+        w.style.removeProperty('margin');
+      }
+    }
+    flushGlide();
+  }
+  applyHue(){
+    const filt = 'hue-rotate(' + this.hue + 'deg)';
+    [this.oil1Ref, this.oil2Ref, this.oil3Ref, this.oil4Ref, this.accentRef, this.accent2Ref, this.accent3Ref, this.accent4Ref, this.accent5Ref, this.accent6Ref, this.accent7Ref, this.accent8Ref, this.accent9Ref, this.accent10Ref, this.accent11Ref, this.emailRef].forEach(r => { if(r.current) r.current.style.filter = filt; });
+    const k = this.knobRef.current, tr = this.trackRef.current;
+    if(k && tr){
+      // _trackW is cached for the duration of a drag; reading clientWidth here right
+      // after writing 16 filters forced a synchronous layout on every frame.
+      k.style.left = (this.hue / 360 * (this._trackW || tr.clientWidth)) + 'px';
+      this.knobContrast();
+    }
+    const kf = this.knobFRef.current, trf = this.trackFRef.current;
+    if(kf && trf) kf.style.left = (this.hue / 360 * (this._trackWF || trf.clientWidth)) + 'px';
+  }
+  syncCap(anim){
+    const w = this.tintWrapRef.current, c = this.capWrapRef.current;
+    if(!w || !c) return;
+    c.style.transition = anim ? 'left 1.15s cubic-bezier(.08,.92,.12,1), top 1.15s cubic-bezier(.08,.92,.12,1)' : 'none';
+    c.style.left = (w.offsetLeft + 40) + 'px';
+    c.style.top = (w.offsetTop + 34) + 'px';
+  }
+  dotDown(e){
+    const w = this.tintWrapRef.current; if(!w) return;
+    const sx = e.clientX, sy = e.clientY;
+    const ox = w.offsetLeft, oy = w.offsetTop;
+    this.stopHops();
+    let moved = false;
+    const move = (ev) => {
+      const dx = ev.clientX - sx, dy = ev.clientY - sy;
+      if(!moved && Math.abs(dx) + Math.abs(dy) > 4) moved = true;
+      if(moved){
+        const host = w.offsetParent || w.parentElement;
+        const pad = Math.min(40, Math.max(16, host.clientWidth * 0.032));
+        const cw = 28 + Math.min(host.clientWidth * 0.52, 240), ch = 150;
+        const maxX = Math.max(pad, host.clientWidth - pad - cw);
+        const maxY = Math.max(pad + 40, host.clientHeight - pad - ch);
+        w.style.left = Math.min(maxX, ox + dx) + 'px';
+        w.style.top = Math.min(maxY, Math.max(pad + 40, oy + dy)) + 'px';
+        this._knobM = null; // wrapper moved, so the knob did too
+        this.syncCap();
+      }
+    };
+    const up = () => {
+      window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up);
+      if(!moved) this.setState(s => ({ tintOpen: !s.tintOpen }));
+      else this.scheduleHop();
+    };
+    window.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
+    e.preventDefault();
+  }
+  framePicker(){
+    // scroll the hero's picker into view, then draw a brief frame around it so the eye
+    // is handed from the copy at the bottom to the control at the top
+    const w = this.tintWrapRef.current; if(!w) return;
+    const r0 = w.getBoundingClientRect();
+    if(r0.top < 60 || r0.bottom > (window.innerHeight || 0) - 40){
+      window.scrollTo({ top: Math.max(0, (window.scrollY || 0) + r0.top - (window.innerHeight || 800) * 0.28), behavior: 'smooth' });
+    }
+    clearTimeout(this._frameT);
+    this._frameT = setTimeout(() => {
+      const r = w.getBoundingClientRect();
+      const t = this.trackRef.current;
+      // the open picker is the dot PLUS the track that extends to its right PLUS the
+      // caption beneath it — frame the union of all three
+      let l = r.left, tp = r.top, rt = r.right, bt = r.bottom;
+      [t, this.capWrapRef.current].forEach(el => {
+        if(!el) return;
+        const er = el.getBoundingClientRect();
+        if(!er.width) return;
+        l = Math.min(l, er.left); tp = Math.min(tp, er.top);
+        rt = Math.max(rt, er.right); bt = Math.max(bt, er.bottom);
+      });
+      const pad = 14;
+      const f = document.createElement('div');
+      f.setAttribute('aria-hidden', 'true');
+      f.style.cssText = 'position:fixed; left:' + (l - pad) + 'px; top:' + (tp - pad) + 'px; width:' +
+        (rt - l + pad * 2) + 'px; height:' + (bt - tp + pad * 2) + 'px; z-index:58;' +
+        'pointer-events:none; border:1px solid rgba(246,245,242,.85); border-radius:4px; will-change:transform, opacity';
+      document.body.appendChild(f);
+      f.animate([
+        { transform: 'scale(1.5)', opacity: 0 },
+        { transform: 'scale(1)', opacity: 1, offset: 0.3 },
+        { transform: 'scale(1)', opacity: 1, offset: 0.7 },
+        { transform: 'scale(1.08)', opacity: 0 }
+      ], { duration: 1300, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'forwards' }).onfinish = () => f.remove();
+    }, 420);
+  }
+  hopBounds(){
+    const w = this.tintWrapRef.current; if(!w) return null;
+    const host = w.offsetParent || w.parentElement;
+    const pad = Math.min(40, Math.max(16, host.clientWidth * 0.032));
+    const cw = 28 + Math.min(host.clientWidth * 0.52, 240), ch = 150;
+    return { w, pad, maxX: Math.max(pad, host.clientWidth - pad - cw), maxY: Math.max(pad + 40, host.clientHeight - pad - ch) };
+  }
+  hop(){
+    return; // the picker is statically placed under the wordmark — no autonomous hopping
+  }
+  hopDisabled(){
+    const b = this.hopBounds(); if(!b || this.state.tintOpen) return;
+    const host = b.w.offsetParent || b.w.parentElement;
+    const hr = host.getBoundingClientRect();
+    const pw = this.portraitWrapRef.current;
+    const blocked = pw ? pw.getBoundingClientRect() : null;
+    const cw = 28 + Math.min(host.clientWidth * 0.52, 240), chh = 160;
+    let x = 0, y = 0;
+    const cx0 = b.w.offsetLeft, cy0 = b.w.offsetTop;
+    const rad = Math.min(160, Math.max(70, host.clientWidth * 0.12));
+    for(let i = 0; i < 24; i++){
+      x = Math.min(b.maxX, Math.max(b.pad, cx0 + (Math.random() * 2 - 1) * rad));
+      y = Math.min(b.maxY, Math.max(b.pad + 40, cy0 + (Math.random() * 2 - 1) * rad));
+      if(!blocked || blocked.width < 2) break;
+      const L = hr.left + x, T = hr.top + y;
+      const clear = L + cw < blocked.left || L > blocked.right || T + chh < blocked.top || T > blocked.bottom;
+      if(clear) break;
+    }
+    b.w.style.transition = 'left 1.15s cubic-bezier(.08,.92,.12,1), top 1.15s cubic-bezier(.08,.92,.12,1)';
+    b.w.style.left = Math.round(x) + 'px';
+    b.w.style.top = Math.round(y) + 'px';
+    this.syncCap(true);
+  }
+  scheduleHop(){
+    return;
+  }
+  scheduleHopDisabled(){
+    if(this._hopT) return;
+    this._hopT = setTimeout(() => { this._hopT = null; if(!this.state.tintOpen){ this.hop(); this.scheduleHop(); } }, 5200);
+  }
+  stopHops(){ if(this._hopT){ clearTimeout(this._hopT); this._hopT = null; } const w = this.tintWrapRef.current; if(w) w.style.transition = 'none'; }
+  galleryDown(e){
+    const g = e.currentTarget; if(!g) return;
+    if(e.target.closest && e.target.closest('button')) return;
+    const sx = e.clientX, sl = g.scrollLeft;
+    let moved = false;
+    let lastX = e.clientX, lastT = performance.now(), vel = 0;
+    if(g._glide){ cancelAnimationFrame(g._glide); g._glide = 0; }
+    const prevSnap = g.style.scrollSnapType, prevBeh = g.style.scrollBehavior;
+    let want = sl, mRaf = 0;
+    const write = () => { mRaf = 0; g.scrollLeft = want; };
+    const move = (ev) => {
+      const dx = ev.clientX - sx;
+      if(!moved && Math.abs(dx) > 3){
+        moved = true;
+        g.style.scrollSnapType = 'none';
+        g.style.scrollBehavior = 'auto';
+        g.style.cursor = 'grabbing';
+      }
+      if(moved){
+        // pointermove fires faster than the screen refreshes on 120Hz touch panels, and
+        // every scrollLeft write scrolls + relayouts the row. One write per frame.
+        want = sl - dx;
+        if(!mRaf) mRaf = requestAnimationFrame(write);
+        const now = performance.now(), dt = now - lastT;
+        if(dt > 0){ vel = 0.7 * ((lastX - ev.clientX) / dt) + 0.3 * vel; lastT = now; lastX = ev.clientX; }
+      }
+    };
+    const up = () => {
+      window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up);
+      if(mRaf){ cancelAnimationFrame(mRaf); mRaf = 0; if(moved) g.scrollLeft = want; }
+      g.style.cursor = 'grab';
+      if(moved && Math.abs(vel) > 0.12){
+        let v = Math.max(-4.5, Math.min(4.5, vel));
+        let prev = performance.now();
+        // read once: this was a forced layout every frame, right after writing scrollLeft
+        const maxS = g.scrollWidth - g.clientWidth;
+        const glide = (t) => {
+          const dt = Math.min(34, t - prev); prev = t;
+          g.scrollLeft += v * dt;
+          v *= Math.pow(0.9955, dt);
+          if(Math.abs(v) > 0.02 && g.scrollLeft > 0 && g.scrollLeft < maxS){ g._glide = requestAnimationFrame(glide); }
+          else {
+            g._glide = 0;
+            g.style.scrollBehavior = prevBeh || 'smooth';
+            g.style.scrollSnapType = prevSnap || 'x mandatory';
+          }
+        };
+        g._glide = requestAnimationFrame(glide);
+        return;
+      }
+      if(moved){
+        g.style.scrollBehavior = prevBeh || 'smooth';
+        g.style.scrollSnapType = prevSnap || 'x mandatory';
+      }
+    };
+    window.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
+    e.preventDefault();
+  }
+  knobContrast(){
+    const k = this.knobRef.current, c = this.canvasRef.current, img = this._fieldImg;
+    if(!k || !c || !img) return;
+    // getBoundingClientRect() twice per call forced a synchronous layout ~30x/second
+    // while the picker was open, on top of the blob draw. The knob only moves on drag
+    // and the canvas only on resize, so cache both and invalidate explicitly.
+    let m = this._knobM;
+    // Mid-drag the knob moves every frame, so derive its position from the rects
+    // cached at pointerdown rather than re-measuring (which would undo the point).
+    const g = this._dragGeo;
+    if(g){
+      m = { fx: (g.tl + this.hue / 360 * g.tw - g.cr.left) / g.cr.width, fy: g.fy };
+    } else if(!m){
+      const cr = c.getBoundingClientRect(), kr = k.getBoundingClientRect();
+      if(!cr.width || !cr.height || !kr.width) return;
+      m = this._knobM = {
+        fx: (kr.left + kr.width / 2 - cr.left) / cr.width,
+        fy: (kr.top + kr.height / 2 - cr.top) / cr.height
+      };
+    }
+    const sx = Math.round(m.fx * img.width);
+    const sy = Math.round(m.fy * img.height);
+    if(sx < 0 || sy < 0 || sx >= img.width || sy >= img.height) return;
+    // read the ImageData draw() already produced — no synchronous GPU readback
+    k.style.background = img.data[(sy * img.width + sx) * 4] > 128 ? '#05060a' : '#fff';
+  }
+  tintDown(e, which){
+    const tr = (which === 'f' ? this.trackFRef : this.trackRef).current; if(!tr) return;
+    this._knobM = null;
+    // The track can't move or resize mid-drag, so measure once here instead of calling
+    // getBoundingClientRect() on every pointermove (a forced layout each time).
+    const r = tr.getBoundingClientRect();
+    if(which === 'f') this._trackWF = r.width; else this._trackW = r.width;
+    // knobContrast() needs the knob's position relative to the canvas; derive it from
+    // these two cached rects and the hue so the whole drag does no layout work at all.
+    const cv = this.canvasRef.current;
+    if(which !== 'f' && cv){
+      const cr = cv.getBoundingClientRect(), kr = this.knobRef.current.getBoundingClientRect();
+      this._dragGeo = cr.width && cr.height
+        ? { tl: r.left, tw: r.width, cr, fy: (kr.top + kr.height / 2 - cr.top) / cr.height }
+        : null;
+    }
+    let px = e.clientX, raf = 0;
+    // applyHue() rewrites filters on a dozen elements; running it per pointermove
+    // saturated the main thread on mobile, so the handle trailed the finger by several
+    // hundred ms and felt like it hadn't initialised. One update per frame instead.
+    const flush = () => {
+      raf = 0;
+      const f = Math.min(1, Math.max(0, (px - r.left) / r.width));
+      this.hue = Math.round(f * 360);
+      this.applyHue();
+    };
+    const set = (ev) => { px = ev.clientX; if(!raf) raf = requestAnimationFrame(flush); };
+    flush();
+    const move = (ev) => set(ev);
+    const up = () => {
+      if(raf) cancelAnimationFrame(raf);
+      this._trackW = 0; this._trackWF = 0; this._dragGeo = null; this._knobM = null;
+      window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up);
+    };
+    window.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
+    e.preventDefault();
+  }
+  flipTile(tile, oldChar, newChar){
+    const cs = getComputedStyle(tile);
+    const face = (char, half) => {
+      const d = document.createElement('div');
+      d.textContent = char;
+      d.style.cssText = 'position:absolute; inset:0; display:block; color:' + cs.color +
+        '; font:' + cs.font + '; letter-spacing:' + cs.letterSpacing + '; text-align:center; padding:' + cs.padding +
+        '; box-sizing:border-box; pointer-events:none; backface-visibility:hidden; box-shadow:inset 0 0 0 1px rgba(246,245,242,.28); clip-path:inset(' + (half === 'top' ? '0 0 50% 0' : '50% 0 0 0') + ');';
+      d.style.transformOrigin = half === 'top' ? '50% 100%' : '50% 0%';
+      tile.appendChild(d);
+      return d;
+    };
+    const topOld = face(oldChar, 'top');
+    const botNew = face(newChar, 'bottom');
+    const topNew = face(newChar, 'top');
+    const botOld = face(oldChar, 'bottom');
+    tile.style.color = 'transparent';
+    [topOld, botNew].forEach(el => { el.style.background = '#05060a'; el.style.zIndex = '3'; });
+    [topNew, botOld].forEach(el => { el.style.background = '#05060a'; el.style.zIndex = '1'; });
+    botNew.style.transform = 'rotateX(92deg)';
+    botNew.style.opacity = '0';
+    const done = () => {
+      [topOld, botNew, topNew, botOld].forEach(el => el.remove());
+      tile.style.color = '';
+    };
+    const a1 = topOld.animate([{ transform: 'rotateX(0deg)' }, { transform: 'rotateX(-92deg)' }], { duration: 300, easing: 'cubic-bezier(.45,0,.85,.5)' });
+    a1.onfinish = () => {
+      topOld.remove();
+      botOld.remove();
+      botNew.style.opacity = '1';
+      const a2 = botNew.animate([{ transform: 'rotateX(92deg)' }, { transform: 'rotateX(0deg)' }], { duration: 330, easing: 'cubic-bezier(.2,.85,.3,1.1)' });
+      a2.onfinish = done;
+    };
+    setTimeout(done, 900);
+  }
+  scrambleWord(){
+    const el = this.scrWordRef.current;
+    if(!el || this._wordRun) return;
+    const target = 'scrambled';
+    const pool = 'abcdefghijklmnopqrstuvwxyz';
+    this._wordRun = true;
+    const u0 = this.scrUpRef.current;
+    if(u0){ u0.style.animation = 'none'; u0.style.opacity = '0'; }
+    let frame = 0;
+    const total = 22;
+    const id = setInterval(() => {
+      frame++;
+      const locked = Math.floor((frame / total) * target.length);
+      let out = '';
+      for(let i = 0; i < target.length; i++) out += i < locked ? target[i] : pool[(Math.random() * pool.length) | 0];
+      el.textContent = out;
+      if(frame >= total){
+        clearInterval(id); el.textContent = target; this._wordRun = false;
+        const u = this.scrUpRef.current;
+        if(u){ u.style.opacity = ''; u.style.animation = 'none'; void u.offsetWidth; u.style.animation = 'rohrFadeUp .55s cubic-bezier(.2,.7,.2,1) both'; }
+      }
+    }, 30);
+  }
+  scrambleEmail(){
+    const el = this.emailRef.current;
+    if(!el || this._emailRun) return;
+    const target = 'hello@rikardrohr.com';
+    const pool = 'abcdefghijklmnopqrstuvwxyz@._-0123456789';
+    this._emailRun = true;
+    let frame = 0;
+    const total = 26;
+    const id = setInterval(() => {
+      frame++;
+      const locked = Math.floor((frame / total) * target.length);
+      let out = '';
+      for(let i = 0; i < target.length; i++){
+        out += i < locked ? target[i] : (target[i] === '@' || target[i] === '.' ? target[i] : pool[(Math.random() * pool.length) | 0]);
+      }
+      el.textContent = out;
+      if(frame >= total){ clearInterval(id); el.textContent = target; this._emailRun = false; }
+    }, 26);
+  }
+  showBottomBar(){
+    const el = this.operaFirstRef.current, g = this.wall2Ref.current;
+    if(!el || !g) return;
+    g.scrollTo({ left: Math.max(0, el.offsetLeft - g.clientWidth * 0.22), behavior: 'smooth' });
+    const r = g.getBoundingClientRect();
+    const y = (window.scrollY || 0) + r.top - Math.max(40, (window.innerHeight - r.height) / 2);
+    window.scrollTo({ top: y, behavior: 'smooth' });
+    setTimeout(() => {
+      const base = 'rotate(-3.4deg)';
+      el.style.zIndex = '400';
+      el.style.transition = 'transform .5s cubic-bezier(.2,.9,.3,1), filter .5s ease';
+      el.style.transform = 'rotate(0deg) scale(1.06)';
+      // the glow tracks the live accent hue (the link itself is hue-rotated), and stays
+      // tight enough that the row's edges don't clip it
+      const gh = (((234 + (this.hue || 0)) % 360) + 360) % 360;
+      el.style.filter = 'drop-shadow(0 0 0 hsla(' + gh + ',100%,68%,0)) drop-shadow(0 5px 14px hsla(' + gh + ',100%,68%,.4))';
+      setTimeout(() => { el.style.transform = base; el.style.filter = ''; el.style.zIndex = '40'; }, 2200);
+    }, 520);
+  }
+  mugPaint(){
+    const w = this.mugWrapRef.current, m = this.mugRef.current;
+    if(w){ w.style.animation = 'none'; w.style.transform = 'translate3d(' + this.mugPos.x.toFixed(1) + 'px,' + this.mugPos.y.toFixed(1) + 'px,0)'; }
+    if(m){
+      const t = this._mugTilt || 0, sh = this._mugShake || 0;
+      const ox = sh ? (Math.random() - .5) * sh : 0, oy = sh ? (Math.random() - .5) * sh : 0;
+      const sc = 1 + (this._mugSwell || 0);
+      m.style.transformOrigin = this._mugSwell ? '50% 50%' : '70% 85%';
+      m.style.transform = 'translate(' + ox.toFixed(1) + 'px,' + oy.toFixed(1) + 'px) rotate(' + (3 + t).toFixed(1) + 'deg) scale(' + sc.toFixed(3) + ')';
+    }
+    this.steamDrift();
+  }
+  steamDrift(){
+    // A puff of steam belongs to the air, not to the cup: each plume anchors to the
+    // world spot it started rising from and holds it for its whole cycle, then re-anchors
+    // over the rim on its next iteration, while rohrSteam still has it at opacity 0.
+    // No rAF of its own — mugPaint already runs per frame. Writes `translate` so the
+    // keyframes keep `transform`.
+    const el = this.steamRef.current; if(!el) return;
+    if(!this._plumes || this._plumeN !== el.children.length){
+      this._plumes = Array.from(el.children); this._plumeN = el.children.length;
+      for(const pl of this._plumes){
+        pl._ax = this.mugPos.x; pl._ay = this.mugPos.y;
+        pl.addEventListener('animationiteration', () => {
+          pl._ax = this.mugPos.x; pl._ay = this.mugPos.y;
+          pl.style.translate = '';
+        });
+      }
+    }
+    for(const pl of this._plumes){
+      const dx = pl._ax - this.mugPos.x, dy = pl._ay - this.mugPos.y;
+      pl.style.translate = (dx || dy) ? dx.toFixed(1) + 'px ' + dy.toFixed(1) + 'px' : '';
+    }
+  }
+  spill(x, y, vx, vy, size){
+    const s = size || (4 + Math.random() * 7);
+    this.fxAdd({ img: this.fxCoffee(), x, y, vx, vy, g: 0.0022,
+      w: s * 2.9, h: s * 3.3, sc1: 0.58, life: 900 + Math.random() * 700, fade: 0.8 });
+  }
+  fxCoffee(){
+    // a coffee drop, not a glowing dot: dark brew body, warm crema rim, one small
+    // specular highlight, and a little teardrop stretch from the sprite's aspect
+    return this.fxSprite('coffee', 40, 46, (g, w, h) => {
+      const rad = g.createRadialGradient(w * 0.38, h * 0.34, 1, w * 0.5, h * 0.52, w * 0.42);
+      rad.addColorStop(0, '#9c6134');
+      rad.addColorStop(0.42, '#6b3a1a');
+      rad.addColorStop(0.82, '#3f200e');
+      rad.addColorStop(1, 'rgba(63,32,14,0)');
+      g.fillStyle = rad;
+      g.beginPath(); g.ellipse(w / 2, h * 0.54, w * 0.36, h * 0.4, 0, 0, Math.PI * 2); g.fill();
+      const glow = g.createRadialGradient(w / 2, h * 0.54, w * 0.3, w / 2, h * 0.54, w * 0.5);
+      glow.addColorStop(0, 'rgba(201,138,78,.4)');
+      glow.addColorStop(1, 'rgba(201,138,78,0)');
+      g.fillStyle = glow; g.fillRect(0, 0, w, h);
+      g.fillStyle = 'rgba(255,231,196,.55)';
+      g.beginPath(); g.ellipse(w * 0.4, h * 0.34, w * 0.09, h * 0.06, -0.5, 0, Math.PI * 2); g.fill();
+    });
+  }
+  mugSpout(){
+    const m = this.mugRef.current; if(!m) return null;
+    const r = m.getBoundingClientRect();
+    return { x: r.left + r.width * (0.30 + Math.random() * 0.42), y: r.top + r.height * (0.16 + Math.random() * 0.1) };
+  }
+  explodeMug(){
+    const m = this.mugRef.current, w = this.mugWrapRef.current;
+    if(!m || !w || this._gone) return;
+    this._gone = true;
+    const r = m.getBoundingClientRect();
+    // Snap back to resting size for one frame, so the pieces are cut at true size.
+    this._mugSwell = 0; this._mugShake = 0; this.mugPaint();
+    const rest = m.getBoundingClientRect();
+    const cx = r.left + r.width / 2, cy = r.top + r.height * 0.45;
+    this.blast(cx, cy, r.width);
+    this._pops = (this._pops || 0) + 1;
+    const kind = (this._pops - 1) % 5;
+    if(kind === 0){
+      for(let i = 0; i < 34; i++){
+        const a = Math.random() * Math.PI * 2;
+        const sp = 0.25 + Math.random() * 1.15;
+        this.spill(cx, cy, Math.cos(a) * sp, Math.sin(a) * sp - 0.55, 5 + Math.random() * 14);
+      }
+    } else if(kind === 1) this.confettiBurst(cx, cy);
+    else if(kind === 2) this.fireworksBurst(cx, cy);
+    else if(kind === 3) this.beansBurst(cx, cy);
+    else this.steamBurst(cx, cy);
+    this.throwShards(rest);
+    this._mugSwell = 0; this._mugShake = 0; this.mugPaint();
+    m.style.cursor = 'default';
+    w.style.pointerEvents = 'none';
+    if(this.grabHintRef.current) this.grabHintRef.current.style.opacity = '0';
+    m.style.transition = 'transform .1s cubic-bezier(.2,.9,.3,1), opacity .1s linear';
+    requestAnimationFrame(() => { m.style.opacity = '0'; });
+    // the wrapper is NOT faded: the cup goes, the steam already in the air keeps rising
+    // and dies on its own opacity, the way a puff outlives the kettle
+    setTimeout(() => {
+      this.mugPos = { x: 0, y: 0 };
+      // anchors stay where they were: the surviving plumes hold the spot the mug broke
+      // at, and re-anchor over the new cup on their next (invisible) iteration
+      this._mugTilt = 0; this._mugShake = 0; this._mugSwell = 0;
+      m.getAnimations().forEach(a => a.cancel());
+      m.style.transition = 'none';
+      m.style.opacity = '1';
+      m.style.cursor = 'grab';
+      m.style.animation = 'rohrMugShake 4s ease-in-out infinite';
+      w.style.pointerEvents = '';
+      this.randomTint();
+      const hint = this.grabHintRef.current;
+      if(hint){
+        hint.textContent = this.popLine(this._pops);
+        hint.style.opacity = '.45';
+      }
+      this.mugPaint();
+      // scale-in on the cup alone (the `scale` property, so rohrMugShake keeps
+      // `transform`) — scaling the wrapper would have dragged the live steam with it
+      m.animate([{ scale: 0.2 }, { scale: 1.08 }, { scale: 1 }], { duration: 700, easing: 'cubic-bezier(.2,1.4,.4,1)' });
+      this._gone = false;
+    }, 1050);
+  }
+  cutShards(bmp, cssW, cssH){
+    // Cut the mug into shard sprites once, ahead of time: each piece is then a plain
+    // bitmap blit, so a break costs no more than 15 extra particles.
+    const COLS = 3, ROWS = 5;
+    const q = bmp.width / Math.max(1, cssW); // bake scale
+    const jx = cssW / COLS * 0.42, jy = cssH / ROWS * 0.42;
+    const vert = [];
+    for(let y = 0; y <= ROWS; y++){
+      vert[y] = [];
+      for(let x = 0; x <= COLS; x++){
+        const edge = x === 0 || y === 0 || x === COLS || y === ROWS;
+        vert[y][x] = {
+          x: (x / COLS) * cssW + (edge ? 0 : (Math.random() * 2 - 1) * jx),
+          y: (y / ROWS) * cssH + (edge ? 0 : (Math.random() * 2 - 1) * jy)
+        };
+      }
+    }
+    const out = [];
+    for(let y = 0; y < ROWS; y++){
+      for(let x = 0; x < COLS; x++){
+        const poly = [vert[y][x], vert[y][x + 1], vert[y + 1][x + 1], vert[y + 1][x]];
+        let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+        for(const v of poly){
+          if(v.x < x0) x0 = v.x; if(v.x > x1) x1 = v.x;
+          if(v.y < y0) y0 = v.y; if(v.y > y1) y1 = v.y;
+        }
+        const pw = Math.max(1, Math.ceil((x1 - x0) * q)), ph = Math.max(1, Math.ceil((y1 - y0) * q));
+        const c = document.createElement('canvas');
+        c.width = pw; c.height = ph;
+        const g = c.getContext('2d');
+        g.beginPath();
+        g.moveTo((poly[0].x - x0) * q, (poly[0].y - y0) * q);
+        for(let i = 1; i < poly.length; i++) g.lineTo((poly[i].x - x0) * q, (poly[i].y - y0) * q);
+        g.closePath();
+        g.clip();
+        g.drawImage(bmp, -x0 * q, -y0 * q);
+        out.push({
+          img: c,
+          w: (x1 - x0), h: (y1 - y0),                  // CSS px
+          cx: (x0 + x1) / 2, cy: (y0 + y1) / 2         // centre, relative to the mug box
+        });
+      }
+    }
+    this._shards = out;
+    this._shardBox = { w: cssW, h: cssH };
+  }
+  throwShards(r){
+    const sh = this._shards;
+    if(!sh || !sh.length) return;
+    // hand the shard layer the mug's live colour chain — the sprites themselves are
+    // cut untinted, once, and never re-cut
+    this.fxTint(this.tintChain());
+    // The cut happens during warm-up, when the lazy mug can still measure smaller
+    // than it finally renders at. Rescale the sprites to the live mug box.
+    const box = this._shardBox || { w: r.width, h: r.height };
+    const k = r.width / Math.max(1, box.w), ky = r.height / Math.max(1, box.h);
+    const half = Math.hypot(r.width, r.height) / 2;
+    for(const s of sh){
+      const cx = s.cx * k, cy = s.cy * ky;
+      const dx = cx - r.width / 2, dy = cy - r.height / 2;
+      const a = Math.atan2(dy, dx) + (Math.random() - 0.5) * 0.5;
+      const reach = 0.45 + (Math.max(1, Math.hypot(dx, dy)) / half) * 0.55;
+      const sp = (250 + Math.random() * 220) * reach;
+      const life = 900 + Math.random() * 300;
+      // fx integrates in ms: divide the per-unit-t values through by the shard's life
+      this.fxAdd({
+        img: s.img, x: r.left + cx, y: r.top + cy,
+        vx: Math.cos(a) * sp / life, vy: (Math.sin(a) * sp - 150) / life,
+        g: 2000 / (life * life),
+        w: s.w * k, h: s.h * ky, sc1: 0.78,
+        spin: (Math.random() - 0.5) * 300 / life,
+        life, fade: 0.6, tint: 1
+      });
+    }
+  }
+  fxDpr(){ return Math.min(1.5, window.devicePixelRatio || 1); }
+  fxLayerDpr(){ return Math.min(1.25, window.devicePixelRatio || 1); }
+  bakeScale(natural, css){
+    const want = this.fxDpr();
+    return Math.max(1, Math.min(want, (natural || css) / Math.max(1, css)));
+  }
+  blast(cx, cy, size){
+    const d = Math.max(90, size * 0.9);
+    this.fxAdd({ img: this.fxFlash(), x: cx, y: cy, vx: 0, vy: 0, g: 0,
+      w: d, h: d, sc0: 0.25, sc1: 1.5, life: 320, fade: 0, a0: 1 });
+    for(let i = 0; i < 6; i++){
+      const s2 = 72 + Math.random() * 118;
+      const a = Math.random() * Math.PI * 2, dist = 40 + Math.random() * 90, life = 900 + Math.random() * 500;
+      this.fxAdd({ img: this.fxSmoke(), x: cx, y: cy,
+        vx: Math.cos(a) * dist / life, vy: (Math.sin(a) * dist - 40) / life, g: 0,
+        w: s2, h: s2, sc0: 0.55, sc1: 2.2, life, fade: 0.1, a0: 0.8 });
+    }
+  }
+  // ---- canvas particle layer -------------------------------------------------
+  // One full-viewport canvas draws pre-baked sprites in a single rAF loop: no layer
+  // churn, no per-particle animation objects, no filters.
+  fx(){
+    let st = this._fx;
+    if(!st){
+      const cv = document.createElement('canvas');
+      cv.setAttribute('aria-hidden', 'true');
+      cv.style.cssText = 'position:fixed; left:0; top:0; width:100%; height:100%; z-index:9998; pointer-events:none';
+      st = this._fx = { cv, ctx: cv.getContext('2d'), ps: [], w: 0, h: 0, dpr: 0, on: false, mounted: false, dirty: true };
+      addEventListener('resize', () => { st.dirty = true; }, { passive: true });
+    }
+    if(st.dirty){
+      const dpr = this.fxLayerDpr();
+      st.w = window.innerWidth; st.h = window.innerHeight; st.dpr = dpr; st.dirty = false;
+      this.fxSize(st.cv, st.ctx, dpr);
+      if(st.cv2) this.fxSize(st.cv2, st.ctx2, dpr);
+      st.dirty0 = null; st.dirty1 = null;
+    }
+    if(!st.mounted){ document.body.appendChild(st.cv); st.mounted = true; }
+    return st;
+  }
+  fxSize(cv, ctx, dpr){
+    const st = this._fx;
+    cv.width = Math.round(st.w * dpr); cv.height = Math.round(st.h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  tintChain(){
+    // computed filters read back as drop-shadow(rgba(0,0,0,.55) 0px 18px 34px) — strip
+    // the shadow, nested parens and all, and keep the colour chain
+    const m = this.mugRef.current;
+    const f = m ? (getComputedStyle(m).filter || '') : '';
+    return f && f !== 'none'
+      ? f.replace(/drop-shadow\((?:[^()]|\([^()]*\))*\)/g, '').replace(/\s+/g, ' ').trim()
+      : '';
+  }
+  fxTint(chain){
+    // Shards get their own layer, painted through the same CSS filter chain as the mug
+    // img, so their colour matches the cup by construction and a tint change is one
+    // style write — no canvas re-derivation, no re-bake, no re-cut.
+    const st = this.fx();
+    if(!st.cv2){
+      const cv = document.createElement('canvas');
+      cv.setAttribute('aria-hidden', 'true');
+      cv.style.cssText = 'position:fixed; left:0; top:0; width:100%; height:100%; z-index:9997; pointer-events:none';
+      st.cv2 = cv; st.ctx2 = cv.getContext('2d');
+      this.fxSize(cv, st.ctx2, st.dpr || this.fxLayerDpr());
+      document.body.appendChild(cv);
+    }
+    st.cv2.style.filter = chain || 'none';
+    return st;
+  }
+  fxAdd(p){
+    const st = this.fx();
+    p.el = 0; p.sc0 = p.sc0 ?? 1; p.sc1 = p.sc1 ?? p.sc0; p.a0 = p.a0 ?? 1;
+    p.fade = p.fade ?? 0.75; p.rot = p.rot || 0; p.spin = p.spin || 0;
+    st.ps.push(p);
+    if(!st.on){ st.on = true; st.last = performance.now(); requestAnimationFrame(this._fxFrame ||= (now) => this.fxFrame(now)); }
+  }
+  fxFrame(now){
+    const st = this._fx;
+    const dt = Math.min(64, now - st.last); st.last = now;
+    if(st.dirty) this.fx();
+    const ps = st.ps, c0 = st.ctx, c1 = st.ctx2;
+    // clear only what was painted last frame: on a big display a full-viewport
+    // clearRect every frame is more work than all the sprites put together
+    const d = st.dirty0, d1 = st.dirty1;
+    if(d) c0.clearRect(d[0], d[1], d[2] - d[0], d[3] - d[1]);
+    else c0.clearRect(0, 0, st.w, st.h);
+    if(c1 && d1) c1.clearRect(d1[0], d1[1], d1[2] - d1[0], d1[3] - d1[1]);
+    let bx0 = Infinity, by0 = Infinity, bx1 = -Infinity, by1 = -Infinity;
+    let tx0 = Infinity, ty0 = Infinity, tx1 = -Infinity, ty1 = -Infinity;
+    let n = 0;
+    for(let i = 0; i < ps.length; i++){
+      const p = ps[i];
+      p.el += dt;
+      const t = p.el / p.life;
+      if(t >= 1) continue;
+      ps[n++] = p;
+      const el = p.el;
+      const x = p.x + p.vx * el, y = p.y + p.vy * el + 0.5 * p.g * el * el;
+      if(x < -120 || x > st.w + 120 || y > st.h + 160) continue;
+      const ctx = (p.tint && c1) ? c1 : c0;
+      const a = p.fadeIn
+        ? (t < 0.28 ? t / 0.28 : 1 - (t - 0.28) / 0.72)
+        : (t < p.fade ? 1 : 1 - (t - p.fade) / (1 - p.fade));
+      ctx.globalAlpha = Math.max(0, Math.min(1, a)) * p.a0;
+      const sc = p.sc0 + (p.sc1 - p.sc0) * t;
+      const w = p.w * sc, h = p.h * sc;
+      const reach = (Math.max(w, h) * 0.75) + 2;
+      if(ctx === c1){
+        if(x - reach < tx0) tx0 = x - reach;
+        if(y - reach < ty0) ty0 = y - reach;
+        if(x + reach > tx1) tx1 = x + reach;
+        if(y + reach > ty1) ty1 = y + reach;
+      } else {
+        if(x - reach < bx0) bx0 = x - reach;
+        if(y - reach < by0) by0 = y - reach;
+        if(x + reach > bx1) bx1 = x + reach;
+        if(y + reach > by1) by1 = y + reach;
+      }
+      const rot = (p.rot + p.spin * el) * Math.PI / 180;
+      if(rot){
+        ctx.save();
+        ctx.translate(x, y); ctx.rotate(rot);
+        if(p.img) ctx.drawImage(p.img, -w / 2, -h / 2, w, h);
+        else { ctx.fillStyle = p.col; ctx.fillRect(-w / 2, -h / 2, w, h); }
+        ctx.restore();
+      } else if(p.img){
+        ctx.drawImage(p.img, x - w / 2, y - h / 2, w, h);
+      } else {
+        ctx.fillStyle = p.col; ctx.fillRect(x - w / 2, y - h / 2, w, h);
+      }
+    }
+    ps.length = n;
+    c0.globalAlpha = 1;
+    const box = (x0, y0, x1, y1) => (n && x1 > x0
+      ? [Math.max(0, x0 | 0), Math.max(0, y0 | 0), Math.min(st.w, (x1 | 0) + 1), Math.min(st.h, (y1 | 0) + 1)]
+      : null);
+    st.dirty0 = box(bx0, by0, bx1, by1);
+    if(c1){
+      c1.globalAlpha = 1;
+      st.dirty1 = box(tx0, ty0, tx1, ty1);
+      // an idle filtered canvas is a composited layer the GPU keeps for nothing
+      if(!n && st.cv2.style.filter !== 'none') st.cv2.style.filter = 'none';
+    }
+    if(n) requestAnimationFrame(this._fxFrame);
+    else st.on = false; // canvas stays mounted: one idle layer beats re-allocating it every burst
+  }
+  fxSprite(key, w, h, paint){
+    const cache = this._fxSpr || (this._fxSpr = {});
+    if(cache[key]) return cache[key];
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    paint(c.getContext('2d'), w, h);
+    return (cache[key] = c);
+  }
+  fxDot(col, glow){
+    return this.fxSprite('d' + col + glow, 40, 40, (g, s) => {
+      const r = s / 2, rgb = this.fxRgb(col);
+      const rad = g.createRadialGradient(r, r, 0, r, r, r);
+      rad.addColorStop(0, 'rgba(' + rgb + ',1)');
+      rad.addColorStop(0.3, 'rgba(' + rgb + ',1)');
+      rad.addColorStop(0.34, 'rgba(' + rgb + ',' + glow + ')');
+      rad.addColorStop(1, 'rgba(' + rgb + ',0)');
+      g.fillStyle = rad; g.fillRect(0, 0, s, s);
+    });
+  }
+  fxFlash(){
+    return this.fxSprite('flash', 96, 96, (g, s) => {
+      const r = s / 2, rad = g.createRadialGradient(r, r, 0, r, r, r);
+      rad.addColorStop(0, 'rgba(255,255,255,.95)');
+      rad.addColorStop(0.45, 'rgba(255,214,150,.55)');
+      rad.addColorStop(0.72, 'rgba(255,150,80,0)');
+      g.fillStyle = rad; g.fillRect(0, 0, s, s);
+    });
+  }
+  fxSmoke(){
+    return this.fxSprite('smoke', 160, 160, (g, s) => {
+      const r = s / 2, rad = g.createRadialGradient(r, r, 0, r, r, r);
+      rad.addColorStop(0, 'rgba(230,225,215,.5)');
+      rad.addColorStop(0.7, 'rgba(200,195,185,0)');
+      g.fillStyle = rad; g.fillRect(0, 0, s, s);
+    });
+  }
+  fxPuff(){
+    return this.fxSprite('puff', 192, 192, (g, s) => {
+      const r = s / 2, rad = g.createRadialGradient(r, r * 1.1, 0, r, r * 1.1, r);
+      rad.addColorStop(0, 'rgba(255,255,255,.5)');
+      rad.addColorStop(0.58, 'rgba(255,255,255,.14)');
+      rad.addColorStop(0.72, 'rgba(255,255,255,0)');
+      g.fillStyle = rad; g.fillRect(0, 0, s, s);
+    });
+  }
+  fxBean(tone){
+    return this.fxSprite('bean' + tone, 48, 34, (g, w, h) => {
+      const rad = g.createRadialGradient(w * 0.38, h * 0.32, 1, w * 0.5, h * 0.5, w * 0.55);
+      rad.addColorStop(0, '#7a4a2c'); rad.addColorStop(0.62, tone); rad.addColorStop(1, '#1d0f09');
+      g.fillStyle = rad;
+      g.beginPath(); g.ellipse(w / 2, h / 2, w / 2 - 1, h / 2 - 1, 0, 0, Math.PI * 2); g.fill();
+      g.strokeStyle = 'rgba(0,0,0,.45)'; g.lineWidth = 1;
+      g.beginPath(); g.ellipse(w / 2, h / 2, w / 2 - 1.5, h / 2 - 1.5, 0, 0, Math.PI * 2); g.stroke();
+      g.strokeStyle = 'rgba(0,0,0,.35)';
+      g.beginPath(); g.moveTo(w * 0.2, h * 0.5); g.quadraticCurveTo(w * 0.5, h * 0.34, w * 0.8, h * 0.5); g.stroke();
+    });
+  }
+  fxRgb(hex){
+    const h = hex.replace('#', '');
+    const v = parseInt(h.length === 3 ? h.replace(/./g, (c) => c + c) : h, 16);
+    return ((v >> 16) & 255) + ',' + ((v >> 8) & 255) + ',' + (v & 255);
+  }
+  initGalleryParallax(){
+    const apply = (el, off) => {
+      if(!el._kids || el._kidN !== el.children.length){ el._kids = Array.from(el.children); el._kidN = el.children.length; }
+      const v = Math.round(-off * 2) / 2;
+      for(let i = 0; i < el._kids.length; i++){
+        const c = el._kids[i];
+        if(c._tv === v) continue;
+        c._tv = v;
+        c.style.translate = v + 'px';
+      }
+    };
+    const run = () => {
+      // the gallery set never changes, so querySelectorAll doesn't belong on a scroll frame
+      if(!this._gals) this._gals = Array.from(document.querySelectorAll('[data-gallery]'));
+      const vh = window.innerHeight || 0, vw = window.innerWidth || 0;
+      // READ pass. Measuring row N after writing translates on row N-1 forced a
+      // synchronous layout per row per frame — the gallery lag.
+      const pending = [];
+      for(const el of this._gals){
+        if(el.dataset.userTouched === '1') continue;
+        const r = el.getBoundingClientRect();
+        if(r.bottom < -600 || r.top > vh + 900) continue;
+        const p = Math.max(0, Math.min(1, (vh - r.top) / (vh + r.height)));
+        if(el._gmax === undefined) el._gmax = el.scrollWidth - el.clientWidth;
+        const max = el._gmax;
+        if(max <= 0) continue;
+        const cap = Math.min(max * 0.55, vw < 760 ? 180 : 340);
+        const q = vw < 900 ? 0.5 : 10;
+        let raw = Math.min(max, Math.max(0, cap - p * cap));
+        // The peek shifts the row LEFT, so it can only borrow from scroll distance that
+        // actually remains to the right. Without this clamp a stale _gmax (measured
+        // before the lazy images settled) or a browser-restored scrollLeft let it shift
+        // past the row's right edge and expose the page background.
+        raw = Math.min(raw, Math.max(0, (el.scrollWidth - el.clientWidth) - el.scrollLeft));
+        const off = Math.round(raw * q) / q;
+        if(el.dataset.off === String(off)) continue;
+        pending.push(el, off);
+      }
+      // WRITE pass. Snap type is NOT rewritten mid-scroll: each rewrite forced the
+      // container to re-snap, and every re-snap nudged the page — the up/down jumping.
+      // Proximity snapping tolerates the peek offset without being toggled off.
+      for(let i = 0; i < pending.length; i += 2){
+        const el = pending[i], off = pending[i + 1];
+        el.dataset.init = '1';
+        el.dataset.off = String(off);
+        apply(el, off);
+      }
+    };
+    this._galleryScroll = () => { if(this._galRaf) return; this._galRaf = requestAnimationFrame(() => { this._galRaf = 0; run(); }); };
+    window.addEventListener('scroll', this._galleryScroll, { passive: true });
+    // A lazy image finishing load changes scrollWidth after _gmax was first measured,
+    // and fires no scroll event — drop the cached max so the next run remeasures once.
+    document.querySelectorAll('[data-gallery] img').forEach(im => {
+      if(im.complete) return;
+      im.addEventListener('load', () => {
+        const g = im.closest('[data-gallery]');
+        if(g){ g._gmax = undefined; g.dataset.off = ''; }
+        // dozens of lazy WebPs finish within the same second or two; remeasure once
+        clearTimeout(this._gRemeasureT);
+        this._gRemeasureT = setTimeout(this._galleryScroll, 90);
+      }, { once: true });
+    });
+    document.querySelectorAll('[data-gallery]').forEach(el => {
+      const mark = () => {
+        if(el.dataset.userTouched === '1') return;
+        el.dataset.userTouched = '1';
+        const depth = el.hasAttribute('data-depth');
+        // The peek is a visual translate on the children, not real scroll position.
+        // Hand it over to scrollLeft instead of animating it away, so the drag starts
+        // from where the gallery actually looked rather than jumping back to 0.
+        const off = parseFloat(el.dataset.off || '0') || 0;
+        const max = el.scrollWidth - el.clientWidth;
+        if(off > 0 && max > 0){
+          // scroll-behavior:smooth is inline on these strips, so a plain scrollLeft
+          // assignment here would ANIMATE to the new position and fight the finger.
+          // Snapping has to go too: the handed-off position is mid-card by definition,
+          // so leaving snap on made the browser immediately re-snap to the nearest
+          // child — that was the jump. The strip is user-driven from here on, and snap
+          // only existed to set the resting positions, so it is not restored.
+          const prev = el.style.scrollBehavior;
+          el.style.scrollBehavior = 'auto';
+          el.style.scrollSnapType = 'none';
+          el.scrollLeft = Math.min(max, el.scrollLeft + off);
+          el.style.scrollBehavior = prev || '';
+        }
+        Array.from(el.children).forEach(c => {
+          c.style.translate = depth ? '0px' : '';
+          c._tv = 0;
+        });
+        el.dataset.off = '0';
+      };
+      if(window.innerWidth < 900 && !el.hasAttribute('data-depth')){
+        el.dataset.snapOrig = '';
+        el.style.scrollSnapType = 'none';
+      }
+      let sx = 0, sy = 0, down = false;
+      // Hand off before the gesture starts, not 24px into it: by then the native
+      // scroller has already moved the strip, so adding the peek offset on top of that
+      // double-shifted it.
+      el.addEventListener('pointerdown', (e) => { down = true; sx = e.clientX; sy = e.clientY; mark(); }, { passive: true });
+      el.addEventListener('pointermove', (e) => {
+        if(!down || el.dataset.userTouched === '1') return;
+        const dx = Math.abs(e.clientX - sx), dy = Math.abs(e.clientY - sy);
+        if(dx > 24 && dx > dy * 2) mark();
+      }, { passive: true });
+      el.addEventListener('pointerup', () => { down = false; }, { passive: true });
+      el.addEventListener('pointercancel', () => { down = false; }, { passive: true });
+      el.addEventListener('wheel', (e) => { if(Math.abs(e.deltaX) > 6 && Math.abs(e.deltaX) > Math.abs(e.deltaY) * 1.5) mark(); }, { passive: true });
+    });
+    run();
+    document.querySelectorAll('[data-gallery] img').forEach(img => {
+      if(img.complete) return;
+      img.addEventListener('load', () => {
+        const g = img.closest('[data-gallery]'); if(g){ g.dataset.off = ''; g._gmax = undefined; }
+        clearTimeout(this._gRemeasureT);
+        this._gRemeasureT = setTimeout(this._galleryScroll, 90);
+      }, { once: true });
+    });
+    window.addEventListener('resize', this._galleryScroll, { passive: true });
+    if(window.IntersectionObserver){
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(en => {
+          if(!en.isIntersecting) return;
+          io.unobserve(en.target);
+          en.target.querySelectorAll('img').forEach(img => {
+            if(img.complete) return;
+            img.loading = 'eager';
+            try { img.fetchPriority = 'high'; } catch(_e){}
+            const warm = new Image();
+            warm.src = img.currentSrc || img.src;
+            if(warm.decode) warm.decode().catch(() => {});
+          });
+        });
+      }, { rootMargin: '2400px 0px' });
+      document.querySelectorAll('[data-gallery], [data-wall]').forEach(el => io.observe(el));
+    }
+    document.querySelectorAll('img[loading="lazy"]').forEach(img => {
+      if(img.complete) return;
+      img.style.opacity = '0';
+      img.style.transition = 'opacity .4s ease';
+      const show = () => { img.style.opacity = '1'; this._galleryScroll(); };
+      img.addEventListener('load', show, { once: true });
+      img.addEventListener('error', show, { once: true });
+    });
+  }
+  popLine(n){
+    const m = {
+      1: 'Another one? Bold choice',
+      2: 'That was your last clean cup',
+      3: 'The barista just noticed',
+      4: 'The barista is watching you',
+      5: 'Five cups. Barista is calling for backup',
+      6: 'You are on a first-name basis with the barista',
+      7: 'This is a lifestyle, not an accident',
+      8: 'Still going. The barista is taking notes',
+      9: 'Nine. The barista hid the good mugs',
+      10: 'Ten cups. Free refill, zero regrets',
+      12: 'A dozen. Even the barista is impressed',
+      15: 'The dishwasher filed a complaint',
+      18: 'IKEA sends its regards',
+      20: 'Twenty. The barista knows your order by heart',
+      25: 'A quarter century of chaos',
+      30: 'Thirty. Porcelain budget: gone',
+      33: 'A third of the way to legendary',
+      40: 'Forty. The barista named a drink after you',
+      42: 'The answer to life, apparently',
+      50: 'Halfway to a hundred. No off switch found',
+      55: 'Your insurance agent called. Twice',
+      60: 'Sixty. The barista started a tally on the wall',
+      66: 'Cups: 66. Dignity: 0',
+      70: 'Seventy. The barista is proud, mostly concerned',
+      75: 'Three quarters there. Still no chill',
+      80: 'Eighty. Someone check on this person',
+      88: 'Eighty-eight. Suspiciously specific pace',
+      90: 'Ninety. The finish line has trust issues',
+      95: 'Five to go. The barista is placing bets',
+      99: 'One more. You know you will',
+      100: 'One hundred. The barista wants royalties'
+    };
+    if(m[n]) return m[n];
+    if(n > 100) return n + ' cups. The barista stopped counting';
+    const filler = ['Cup ' + n + ' down, dignity unclear', n + ' cups in. The barista sighed', 'Cup ' + n + '. No refunds', n + ' cups. The barista is concerned', 'That makes ' + n + '. Worth it?'];
+    return filler[n % filler.length];
+  }
+  idleSpill(){
+    if(this._mugDragging || this._gone) return;
+    const el = this.mugRef.current; if(!el) return;
+    const r = el.getBoundingClientRect();
+    if(r.bottom < 0 || r.top > (window.innerHeight || 0)) return;
+    const n = 8 + ((Math.random() * 6) | 0);
+    for(let i = 0; i < n; i++){
+      const sp = this.mugSpout();
+      if(sp) this.spill(sp.x, sp.y, (Math.random() - .5) * 0.6, -0.75 - Math.random() * 0.6, 4 + Math.random() * 8);
+    }
+  }
+  prepShatter(){
+    // Cut the shard sprites ahead of the break so the explosion frame does no image
+    // decode and no first-draw GPU allocation. The cut is UNTINTED and geometry-only:
+    // colour arrives as a CSS filter on the shard layer, so a new session tint costs
+    // nothing here and the sprites survive every break.
+    const m = this.mugRef.current; if(!m) return;
+    const src = m.currentSrc || m.src; if(!src) return;
+    // warm the particle layer and its sprites too, so the break frame allocates nothing
+    this.fx();
+    this.fxFlash(); this.fxSmoke(); this.fxPuff(); this.fxCoffee();
+    const r = m.getBoundingClientRect();
+    const box = this._shardBox;
+    const drift = box ? Math.abs(r.width - box.w) / Math.max(1, box.w) : 1;
+    if(this._shatterKey === src && drift < 0.12) return;
+    this._shatterKey = null;
+    const w = Math.max(1, Math.round(r.width || 160)), h = Math.max(1, Math.round(r.height || 160));
+    const im = new Image();
+    im.src = src;
+    const run = () => {
+      const off = document.createElement('canvas');
+      const q = this.bakeScale(im.naturalWidth, w);
+      off.width = Math.round(w * q); off.height = Math.round(h * q);
+      off.getContext('2d').drawImage(im, 0, 0, off.width, off.height);
+      this._shatterKey = src;
+      this.cutShards(off, w, h);
+    };
+    if(im.complete) run();
+    else im.onload = run;
+  }
+  randomTint(){
+    const m = this.mugRef.current; if(!m) return;
+    const h = Math.floor(Math.random() * 360);
+    this._mugHue = h;
+    m.style.filter = 'drop-shadow(0 18px 34px rgba(0,0,0,.55)) sepia(.85) saturate(2.1) hue-rotate(' + h + 'deg)';
+    // nothing to re-bake for colour any more; this only catches a resized mug box
+    const idle = window.requestIdleCallback || ((f) => setTimeout(f, 120));
+    idle(() => this.prepShatter());
+  }
+  confettiBurst(cx, cy){
+    const cols = ['#ff5f6d', '#ffc371', '#8ef6a4', '#7fd9ff', '#8b8cf7', '#b276f0', '#f6f5f2'];
+    for(let i = 0; i < 48; i++){
+      const a = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 1.5;
+      const sp = 0.35 + Math.random() * 1.25;
+      this.fxAdd({ col: cols[(Math.random() * cols.length) | 0], x: cx, y: cy,
+        vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, g: 0.0019,
+        w: 5 + Math.random() * 7, h: 8 + Math.random() * 10,
+        spin: (Math.random() - 0.5) * 2.4, life: 1500 + Math.random() * 900, fade: 0.72 });
+    }
+  }
+  fireworksBurst(cx, cy){
+    const cols = ['#ffd76b', '#ff8f5f', '#7fd9ff', '#f6f5f2', '#c46bff'];
+    const shell = (x, y, delay, n, col) => setTimeout(() => {
+      const img = this.fxDot(col, 0.42);
+      for(let i = 0; i < n; i++){
+        const a = (i / n) * Math.PI * 2 + Math.random() * 0.2;
+        const sp = 0.5 + Math.random() * 0.55;
+        const s = (3 + Math.random() * 3) * 3.4;
+        this.fxAdd({ img, x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, g: 0.0019,
+          w: s, h: s, sc1: 0.7, life: 1100 + Math.random() * 500, fade: 0.6 });
+      }
+    }, delay);
+    shell(cx, cy, 0, 26, cols[0]);
+    shell(cx - 90, cy - 70, 260, 22, cols[2]);
+    shell(cx + 110, cy - 40, 480, 22, cols[4]);
+    shell(cx + 10, cy - 130, 700, 30, cols[1]);
+  }
+  beansBurst(cx, cy){
+    // roasted beans: heavy, tumbling, dark — physical counterweight to the light bursts
+    for(let i = 0; i < 26; i++){
+      const a = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 1.7;
+      const sp = 0.4 + Math.random() * 0.95;
+      const w = 9 + Math.random() * 6, h = w * (0.66 + Math.random() * 0.12);
+      const tone = ['#3b2116', '#4d2c1b', '#2c1810', '#5b3722'][(Math.random() * 4) | 0];
+      this.fxAdd({ img: this.fxBean(tone), x: cx, y: cy,
+        vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, g: 0.0019, w, h,
+        spin: (Math.random() - 0.5) * 3.2, life: 1700 + Math.random() * 800, fade: 0.75 });
+    }
+    const grit = this.fxDot('#2c1810', 0.3);
+    for(let i = 0; i < 12; i++){
+      const a = Math.random() * Math.PI * 2, sp = 0.15 + Math.random() * 0.5, s = (2 + Math.random() * 3) * 3;
+      this.fxAdd({ img: grit, x: cx, y: cy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp,
+        g: 0.0019, w: s, h: s, life: 1200 + Math.random() * 600, fade: 0.7, a0: 0.8 });
+    }
+  }
+  steamBurst(cx, cy){
+    // soft expanding puffs — the quiet one, all scale and fade instead of ballistics
+    const puff = this.fxPuff();
+    for(let i = 0; i < 13; i++){
+      const s = 46 + Math.random() * 88;
+      const ox = (Math.random() - 0.5) * 70, oy = (Math.random() - 0.5) * 40;
+      const life = 1400 + Math.random() * 900;
+      const rise = 130 + Math.random() * 190, drift = (Math.random() - 0.5) * 150;
+      this.fxAdd({ img: puff, x: cx + ox, y: cy + oy,
+        vx: drift / life, vy: -rise / life, g: 0,
+        w: s, h: s, sc0: 0.35, sc1: 2.6, life, fadeIn: true, a0: 0.75 });
+    }
+    const fleck = this.fxDot('#f6f5f2', 0.3);
+    for(let i = 0; i < 9; i++){
+      const a = Math.random() * Math.PI * 2, sp = 0.1 + Math.random() * 0.3, s = (3 + Math.random() * 4) * 2.8;
+      this.fxAdd({ img: fleck, x: cx, y: cy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 0.3,
+        g: 0.0019, w: s, h: s, life: 1300 + Math.random() * 700, fade: 0.7, a0: 0.7 });
+    }
+  }
+  mugDown(e){
+    const w = this.mugWrapRef.current; if(!w || this._gone) return;
+    e.preventDefault();
+    const host = w.offsetParent || w.parentElement;
+    const bl = w.offsetLeft, bt = w.offsetTop, ww = w.offsetWidth, wh = w.offsetHeight;
+    const minX = -bl, maxX = Math.max(minX, host.clientWidth - bl - ww);
+    const minY = -bt + 8, maxY = Math.max(minY, host.clientHeight - bt - wh);
+    const start = { x: e.clientX, y: e.clientY };
+    const orig = { x: this.mugPos.x, y: this.mugPos.y };
+    let last = { x: e.clientX, y: e.clientY, t: performance.now() };
+    let charge = 0, moved = false, speed = 0, lastSpill = 0;
+    const m = this.mugRef.current;
+    if(m){ m.style.cursor = 'grabbing'; m.style.animation = 'none'; }
+    if(this.grabHintRef.current) this.grabHintRef.current.style.opacity = '0';
+    const tick = () => {
+      if(!this._mugDragging) return;
+      const now = performance.now();
+      const dt = Math.min(50, now - (this._mugLastTick || now));
+      this._mugLastTick = now;
+      charge += dt;
+      speed *= 0.86;
+      const q = Math.max(0, Math.min(1, charge / 1900));
+      const p = Math.max(0, Math.min(1, (charge - 1540) / 360));
+      const e = p * p * p;
+      this._mugShake = q * q * 12 + e * 40;
+      this._mugSwell = -0.6 * e + (p > 0.86 ? 1.35 * Math.pow((p - 0.86) / 0.14, 3) : 0);
+      this._mugTilt = (this._mugTilt || 0) * 0.9;
+      if(p > 0.35 && Math.random() < p * 0.25){
+        const s = this.mugSpout();
+        if(s) this.spill(s.x, s.y, (Math.random() - .5) * 0.25, -0.25 - Math.random() * 0.3, 3 + Math.random() * 4);
+      }
+      this.mugPaint();
+      if(charge > 1900){ this.endMugDrag(); this.explodeMug(); return; }
+      this._mugRaf = requestAnimationFrame(tick);
+    };
+    const move = (ev) => {
+      const now = performance.now();
+      const dt = Math.max(8, now - last.t);
+      const vx = (ev.clientX - last.x) / dt, vy = (ev.clientY - last.y) / dt;
+      speed = Math.hypot(vx, vy);
+      last = { x: ev.clientX, y: ev.clientY, t: now };
+      const dx = ev.clientX - start.x, dy = ev.clientY - start.y;
+      if(!moved && Math.abs(dx) + Math.abs(dy) > 4) moved = true;
+      this.mugPos.x = Math.max(minX, Math.min(maxX, orig.x + dx));
+      this.mugPos.y = Math.max(minY, Math.min(maxY, orig.y + dy));
+      this._mugTilt = Math.max(-26, Math.min(26, -vx * 16));
+      if(speed > 0.95 && now - lastSpill > 55){
+        lastSpill = now;
+        const s = this.mugSpout();
+        const n = speed > 2 ? 3 : 1;
+        for(let i = 0; i < n; i++){
+          if(s) this.spill(s.x, s.y, vx * 0.55 + (Math.random() - .5) * 0.3, Math.min(0, vy * 0.5) - 0.15 - Math.random() * 0.35);
+        }
+      }
+      this.mugPaint();
+    };
+    const up = () => {
+      this.endMugDrag();
+      if(m){ m.style.cursor = 'grab'; m.style.animation = 'rohrMugShake 4s ease-in-out infinite'; }
+      this._mugShake = 0; this._mugSwell = 0; this._mugTilt = 0;
+      this.mugPaint();
+      if(!moved && charge < 900) this.cheersNow();
+      const hint = this.grabHintRef.current;
+      if(hint && !this._gone){
+        hint.textContent = "Don't let go of me";
+        requestAnimationFrame(() => { hint.style.opacity = '.45'; });
+      }
+    };
+    this._mugDragging = true;
+    this._mugLastTick = performance.now();
+    this._mugMove = move; this._mugUp = up;
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+    this._mugRaf = requestAnimationFrame(tick);
+  }
+  endMugDrag(){
+    this._mugDragging = false;
+    cancelAnimationFrame(this._mugRaf);
+    if(this._mugMove) window.removeEventListener('pointermove', this._mugMove);
+    if(this._mugUp) window.removeEventListener('pointerup', this._mugUp);
+    this._mugMove = this._mugUp = null;
+  }
+  cheersNow(){
+    const m = this.mugRef.current;
+    if(m){ m.style.animation = 'none'; void m.offsetWidth; m.style.animation = 'rohrCheers .8s cubic-bezier(.12,.85,.25,1)'; setTimeout(() => { if(m) m.style.animation = 'rohrMugShake 4s ease-in-out infinite'; }, 820); }
+    const sp = this.splashRef.current;
+    if(sp) Array.from(sp.children).forEach((d, i) => { d.style.animation = 'none'; void d.offsetWidth; d.style.animation = 'rohrDrop ' + (0.9 + i * 0.11) + 's linear ' + (0.12 + i * 0.035) + 's'; });
+  }
+  componentDidMount(){
+    setTimeout(() => this.initGalleryParallax(), 400);
+    this.applyHue();
+
+    this._t0 = Date.now();
+    this._clock = setInterval(() => this.setState({ secs: Math.floor((Date.now() - this._t0) / 1000) }), 1000);
+    setTimeout(() => this.layoutRing(), 60);
+    setTimeout(() => this.scheduleHop(), 1200);
+    setTimeout(() => this.prepShatter(), 900);
+    // Spew on the shake, not on a parallel clock. A fixed interval drifted against the
+    // CSS animation and desynced completely whenever the animation restarted (drag,
+    // cheers, mug break). Instead re-read the animation's phase every cycle and land
+    // the particles on the jolt at ~90% of rohrMugShake's 4s loop.
+    const SHAKE_MS = 4000, SPEW_AT = 3480;
+    const tickSpill = () => {
+      const el = this.mugRef.current;
+      const anim = el && el.getAnimations().find(a => a.animationName === 'rohrMugShake');
+      if(!anim){
+        this.idleSpill();
+        this._spillT = setTimeout(tickSpill, SHAKE_MS);
+        return;
+      }
+      const phase = (Number(anim.currentTime) || 0) % SHAKE_MS;
+      // Timers fire late, so "just past the jolt" must still count as the jolt — a strict
+      // window let the phase overshoot and skip a whole cycle every time.
+      if(phase >= SPEW_AT - 70 && phase <= SPEW_AT + 420){
+        this.idleSpill();
+        this._spillT = setTimeout(tickSpill, SHAKE_MS - 500);
+        return;
+      }
+      const dt = phase < SPEW_AT ? SPEW_AT - phase : SHAKE_MS - phase + SPEW_AT;
+      this._spillT = setTimeout(tickSpill, Math.max(30, dt - 30));
+    };
+    this._spillT = setTimeout(tickSpill, SPEW_AT);
+    this.blobs = this.makeBlobs();
+    this.resize = () => {
+      // Assigning canvas.width/height CLEARS the bitmap. On mobile, scroll-start collapses
+      // the URL bar => layout nudge => resize => cleared canvas composited for one frame =>
+      // black flash. So: only reassign when the backing size really changes, ignore the
+      // small height wobble browser chrome causes, and redraw synchronously before yielding.
+      const c2 = this.canvas2Ref.current;
+      if(c2){
+        const r2 = c2.getBoundingClientRect();
+        if(r2.width > 40 && r2.height > 40){
+          const s2 = Math.min(1, (window.innerWidth < 900 ? 420 : 260) / r2.width, Math.sqrt(62000 / Math.max(1, r2.width * r2.height)));
+          const w2 = Math.round(r2.width * s2), h2 = Math.max(60, Math.round(r2.height * s2));
+          if(c2.width !== w2 || c2.height !== h2){ c2.width = w2; c2.height = h2; }
+        }
+      }
+      const c = this.canvasRef.current; if(!c) return;
+      const r = c.getBoundingClientRect();
+      const mob = window.innerWidth < 900;
+      // cost is W*H*blobs per frame, so budget PIXELS (portrait phones are tall => a width target alone explodes)
+      const budget = mob ? 150000 : 230000;
+      const area = Math.max(1, r.width * r.height);
+      let scale = Math.min(1, Math.sqrt(budget / area));
+      if(mob) scale = Math.min(scale, 900 / Math.max(1, r.width));
+      const w = Math.max(200, Math.round(r.width * scale));
+      const h = Math.max(200, Math.round(r.height * scale));
+      // narrow viewports get proportionally bigger blobs so the field still floods the wordmark
+      if(r.width > 40) this.rScale = 1 + 0.16 * (1 - Math.min(1, Math.max(0, r.width / 1200)));
+      const dw = Math.abs(w - c.width), dh = Math.abs(h - c.height);
+      if(!dw && !dh) return;
+      // URL-bar show/hide only moves height; under blur(4.5px) contrast(26) a slightly
+      // stretched field is invisible, so absorb it rather than clearing the bitmap.
+      if(mob && !dw && dh < c.height * 0.22) return;
+      c.width = w; c.height = h;
+      if(this.t0) this.draw((performance.now() - this.t0) / 1000);
+    };
+    this.resize();
+    this.galleryFit();
+    requestAnimationFrame(this.galleryFit);
+    window.addEventListener('resize', this.resize);
+    this._onResizeFit = () => {
+      // On mobile, hiding the URL bar fires resize with a height-only delta. Re-fitting
+      // the galleries there rewrites their margins mid-scroll, which relayouts and
+      // shifts the page — the jump when scrolling down off the hero. Only react to a
+      // width change, or a height change too large to be browser chrome.
+      const w = window.innerWidth, h = window.innerHeight;
+      const pw = this._fitW, ph = this._fitH;
+      this._fitW = w; this._fitH = h;
+      if(pw === w && ph !== undefined && Math.abs(h - ph) < ph * 0.25) return;
+      document.querySelectorAll('[data-gallery]').forEach(el => { el._gmax = undefined; el.dataset.off = ''; });
+      this.galleryFit();
+    };
+    window.addEventListener('resize', this._onResizeFit);
+    if(window.ResizeObserver){
+      // Observe the PARENT box, never the canvas: resize() writes canvas.width/height,
+      // which WebKit reports back as a size change on the canvas => infinite observer
+      // loop (page never settles). Dedupe on rounded px and coalesce into one rAF,
+      // because the parent's fractional inset% box jitters sub-pixel in WebKit too.
+      let lw = -1, lh = -1, pending = false;
+      this.ro = new ResizeObserver(entries => {
+        const box = entries[0] && entries[0].contentRect; if(!box) return;
+        const w = Math.round(box.width), h = Math.round(box.height);
+        if(w === lw && h === lh) return;
+        lw = w; lh = h;
+        if(pending) return;
+        pending = true;
+        requestAnimationFrame(() => { pending = false; this.resize(); });
+      });
+      const cel = this.canvasRef.current;
+      if(cel && cel.parentElement) this.ro.observe(cel.parentElement);
+    }
+    this.onScroll = () => { this.scrollY = window.scrollY || 0; };
+    window.addEventListener('scroll', this.onScroll, { passive: true });
+    document.querySelectorAll('img[data-gif]').forEach(im => {
+      const play = () => { if(im.dataset.played === '1') return; im.dataset.played = '1'; im.src = im.dataset.gif; };
+      im.addEventListener('pointerenter', play);
+      im.addEventListener('click', play);
+    });
+    this.t0 = performance.now();
+    this.lastDraw = 0;
+    this._mobDraw = window.innerWidth < 900;
+    window.addEventListener('resize', () => { this._mobDraw = window.innerWidth < 900; }, { passive: true });
+    this.loop = () => {
+      if(document.hidden){ this.raf = requestAnimationFrame(this.loop); return; }
+      const now = performance.now();
+      if(now - this.lastDraw > (this._mobDraw ? 50 : 33)){
+        const t = (now - this.t0)/1000; this.lastDraw = now;
+        const vis = (el) => { if(!el) return false; const r = el.getBoundingClientRect(); return r.bottom > -80 && r.top < (window.innerHeight||0) + 80; };
+        if(vis(this.canvasRef.current)) this.draw(t);
+        if((window.innerWidth || 0) > 900 && vis(this.canvas2Ref.current)) this.draw(t + 7.5, this.canvas2Ref.current, 0.86, 0.53);
+      }
+      if(this.state.tintOpen && !((this.kcFrame = (this.kcFrame || 0) + 1) % 8)) this.knobContrast();
+      if(!this._mobDraw || !((this.pxFrame = (this.pxFrame || 0) + 1) % 2)) this.parallax();
+      this.raf = requestAnimationFrame(this.loop);
+    };
+    this.raf = requestAnimationFrame(this.loop);
+  }
+  componentWillUnmount(){
+    cancelAnimationFrame(this.raf);
+    if(this._onResizeFit) window.removeEventListener('resize', this._onResizeFit);
+    if(this.ro) this.ro.disconnect();
+    window.removeEventListener('resize', this.resize);
+    window.removeEventListener('scroll', this.onScroll);
+    clearInterval(this._clock);
+    clearInterval(this._idleSpill);
+    clearTimeout(this._spillT);
+    this.endMugDrag();
+    this.stopHops();
+  }
+  makeBlobs(){
+    // Harmonic orbits only => the whole field is exactly periodic (seamless loop).
+    const n = this.props.blobCount ?? 9, out = [], K = [1,1,2,2,3];
+    for(let i=0;i<n;i++){
+      out.push({
+        x: Math.random(), y: Math.random(),
+        r: 0.10 + Math.random()*0.20,
+        ax: 0.05 + Math.random()*0.13,
+        ay: 0.04 + Math.random()*0.11,
+        kx: K[(Math.random()*K.length)|0],
+        ky: K[(Math.random()*K.length)|0],
+        kr: 1 + ((Math.random()*2)|0),
+        px: Math.random()*Math.PI*2,
+        py: Math.random()*Math.PI*2,
+        pr: Math.random()*Math.PI*2
+      });
+    }
+    return out;
+  }
+  parallax(){
+    const y = this.scrollY, amt = this.props.parallax ?? 1;
+    // Everything below is scroll-driven, so there is nothing to recompute while the
+    // page is still — this skips a forced layout (aboutScroll's rect reads) on most
+    // frames instead of paying it ~30x/second.
+    if(y === this._pxY) return;
+    this._pxY = y;
+    if(this.fieldRef.current) this.fieldRef.current.style.transform = 'translate3d(0,' + (y*0.22*amt).toFixed(1) + 'px,0) scale(1.02)';
+    if(this.wordRef.current) this.wordRef.current.style.transform = 'translate3d(0,' + (-y*0.42*amt).toFixed(1) + 'px,0)';
+    this.aboutScroll();
+  }
+  aboutScroll(){
+    const vh = window.innerHeight || 1;
+    const wrap = this.portraitWrapRef.current, img = this.portraitRef.current;
+    if(wrap && img){
+      const r = (wrap.parentElement || wrap).getBoundingClientRect();
+      const cl = (v) => Math.max(0, Math.min(1, v));
+      // land: image sits 50px low until the panel reaches its resting place
+      const enter = cl((vh - r.top) / (vh * 0.82 + 1));
+      const e = 1 - Math.pow(1 - enter, 2);
+      // whole column starts 120px high (bleeding above the black panel), then lands flush
+      const ty = Math.round(-120 * (1 - e) * 2) / 2;
+      if(ty !== this._portraitTy){
+        this._portraitTy = ty;
+        wrap.style.transform = 'translate3d(0,' + ty + 'px,0)';
+        if(this.scrollCueRef.current) this.scrollCueRef.current.style.transform = 'translate3d(0,' + ty + 'px,0)';
+      }
+    }
+    const h = this.helloRef.current;
+    if(h && !CSS.supports('animation-timeline','view()')){
+      if(!this._helloIn && h.getBoundingClientRect().top < vh * 0.9){
+        this._helloIn = true;
+        h.animate([{opacity:0,transform:'translate3d(0,34px,0)'},{opacity:1,transform:'none'}],{duration:900,easing:'cubic-bezier(.2,.7,.2,1)',fill:'both'});
+      }
+    }
+  }
+  draw(t, canvas, rMul, yLo){
+    const c = canvas || this.canvasRef.current; if(!c) return;
+    const ctx = c.getContext('2d', { colorSpace: 'srgb' });
+    const W = c.width, H = c.height;
+    // Reuse one buffer per canvas. createImageData allocated ~600 KB every frame, and
+    // the resulting GC churn was a large part of the general mobile jank.
+    if(!c._buf || c._bufW !== W || c._bufH !== H){
+      c._buf = ctx.createImageData(W, H); c._bufW = W; c._bufH = H;
+    }
+    const img = c._buf;
+    const d = img.data;
+    const speed = this.props.speed ?? 1;
+    const thr = this.props.density ?? 1.0;
+    const w = (2 * Math.PI) / (this.props.loopSeconds ?? 40);
+    const tt = t * speed;
+    const ar = W / H;
+    // portrait canvases: radii are in height-units, so shrink them or the field floods the frame
+    const fit = Math.min(1, 0.55 + 0.45 * Math.min(1, ar));
+    const lvl = 4.4 * thr;
+    const pos = this.blobs.map(o => ({
+      x: o.x + o.ax * Math.sin(o.kx * w * tt + o.px),
+      y: (yLo ? yLo + (o.y + o.ay * Math.sin(o.ky * w * tt + o.py)) * (1 - yLo) : o.y + o.ay * Math.sin(o.ky * w * tt + o.py)),
+      rr: o.r * fit * (this.rScale || 1) * (rMul || 1) * (1 + 0.07 * Math.sin(o.kr * w * tt + o.pr))
+    }));
+    for(let py=0; py<H; py++){
+      const ny = py / H;
+      for(let px=0; px<W; px++){
+        const nx = px / W;
+        let s = 0;
+        for(let i=0;i<pos.length;i++){
+          const p = pos[i];
+          const dx = (nx - p.x) * ar, dy = ny - p.y;
+          s += (p.rr * p.rr) / (dx*dx + dy*dy + 0.0006);
+        }
+        const o = (py*W + px)*4;
+        let g;
+        // Only pixels near the iso-surface need the gradient for anti-aliasing; the
+        // interior and exterior are flat. Computing it everywhere was most of the
+        // first-frame cost. The band is far wider than the ~1px ramp, so it can't clip.
+        if(s > lvl * 1.45) g = 255;
+        else if(s < lvl * 0.68) g = 0;
+        else {
+          let gx = 0, gy = 0;
+          for(let i=0;i<pos.length;i++){
+            const p = pos[i];
+            const dx = (nx - p.x) * ar, dy = ny - p.y;
+            const q = dx*dx + dy*dy + 0.0006;
+            const inv = (p.rr * p.rr) / (q * q);
+            gx -= 2 * inv * dx * ar;
+            gy -= 2 * inv * dy;
+          }
+          const gpx = gx / W, gpy = gy / H;
+          let gp = Math.sqrt(gpx*gpx + gpy*gpy);
+          if(gp < 1e-9) gp = 1e-9;
+          let v = 0.5 + (s - lvl) / (gp * 1.7);
+          if(v < 0) v = 0; else if(v > 1) v = 1;
+          g = Math.round(v * 255);
+        }
+        d[o] = g; d[o+1] = g; d[o+2] = g; d[o+3] = 255;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+    // Boot signal for the loader. Gated on 10 painted frames, not the first one: the
+    // per-pixel loop runs interpreted until the JIT tiers it up, so releasing the
+    // overlay on frame 1 handed the user the slow warm-up frames.
+    if(((this._paintN = (this._paintN || 0) + 1)) >= 10) window.__rohrPainted = true;
+    // keep the hero's pixels for knobContrast() so it never has to read back the GPU
+    if(!canvas) this._fieldImg = img;
+  }
+}
+</script>
+</body>
+</html>
