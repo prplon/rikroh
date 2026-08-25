@@ -6,6 +6,8 @@
 <title>Röhr</title>
 <meta name="description" content="Product design portfolio — Rebl, Opera, Volvo.">
 <meta name="theme-color" content="#05060a">
+<link rel="icon" id="favi" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="favicon.svg">
 <link rel="preconnect" href="https://unpkg.com" crossorigin="anonymous">
 <link rel="preload" href="uploads/Archivo-Bold.ttf" as="font" type="font/ttf" crossorigin="anonymous">
 <link rel="preload" href="uploads/Archivo-Regular.ttf" as="font" type="font/ttf" crossorigin="anonymous">
@@ -42,9 +44,16 @@
   // The blobs are a fixed pastel gradient with hue-rotate() over it, NOT hsl(HUE,...),
   // so match them the same way: same base stop, same filter.
   var ROT='hue-rotate('+HUE+'deg)';
-  if(fill){fill.style.color='#7fd9ff';fill.style.filter=ROT;}
-  if(bar){bar.style.background='#7fd9ff';bar.style.filter=ROT;}
+  if(fill){fill.style.color='#7fd9ff';fill.style.filter=ROT;}  if(bar){bar.style.background='#7fd9ff';bar.style.filter=ROT;}
   if(num){num.style.color='#7fd9ff';num.style.filter=ROT;}
+  // the tab icon takes the session hue too: three lava blobs, same roll of the dice
+  try{
+    var ic=document.getElementById('favi');
+    if(ic){
+      var c1='hsl('+((320+HUE)%360)+',100%,82%)',c2='hsl('+((20+HUE)%360)+',100%,68%)';
+      ic.href='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><defs><linearGradient id="g" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="'+c1+'"/><stop offset="1" stop-color="'+c2+'"/></linearGradient></defs><rect width="32" height="32" fill="#05060a"/><circle cx="11.5" cy="21" r="8.5" fill="url(#g)"/><circle cx="21" cy="10.5" r="5.6" fill="url(#g)"/><circle cx="17.6" cy="26.2" r="2.8" fill="url(#g)"/></svg>');
+    }
+  }catch(err){}
   function set(p){if(fill)fill.style.clipPath='inset(-30% '+(100-p)+'% -30% -5%)';if(bar)bar.style.width=p+'%';if(num)num.textContent=Math.round(p)+'%';}
   // Release on real signals: fonts, plus the above-the-fold (non-lazy) images. Lazy
   // gallery images are excluded on purpose — waiting on them holds the overlay open.
@@ -769,7 +778,7 @@
       <span style="width:22px; height:22px; flex:0 0 auto; border-radius:50%; box-shadow:0 0 0 1.5px rgba(246,245,242,.6); background:linear-gradient(90deg,#5b6bff,#c46bff 14%,#ff5f6d 28%,#ffa14a 42%,#ffe94a 56%,#6ef07f 72%,#3ad1ff 86%,#5b6bff)"></span>
       <div ref="{{ trackFRef }}" onPointerDown="{{ onTintDownF }}" style="position:relative; width:min(52vw,240px); height:8px; border-radius:4px; cursor:ew-resize; touch-action:none; background:linear-gradient(90deg,#5b6bff,#c46bff 14%,#ff5f6d 28%,#ffa14a 42%,#ffe94a 56%,#6ef07f 72%,#3ad1ff 86%,#5b6bff)">
         <div ref="{{ knobFRef }}" style="position:absolute; top:-5px; left:0; width:3px; height:18px; margin-left:-1.5px; border-radius:2px; background:#fff; pointer-events:none"></div>
-        <div aria-hidden="true" style="position:absolute; top:-18px; right:-14px; bottom:-18px; left:-14px; z-index:-1"></div>
+        <div aria-hidden="true" style="position:absolute; top:-15px; right:-16px; bottom:-15px; left:-16px; z-index:2; touch-action:none"></div>
       </div>
       <div style="display:flex; flex-wrap:wrap; gap:clamp(20px,3vw,44px); margin-left:auto">
       <a href="https://www.linkedin.com/in/rikardrohr/" target="_blank" rel="noopener" style="display:flex; align-items:center; gap:10px; color:#f6f5f2; font-size:clamp(11px,1vw,13px); letter-spacing:.1em; text-transform:uppercase; line-height:1">
@@ -1016,38 +1025,38 @@ class Component extends DCLogic {
         const s = this.state.secs || 0;
         // every 30s to 5min, every minute to 10min, every 5min to 100min
         const L = [
-          'Straight to the bottom. That was quick, then. Coffee?',
-          'Thirty seconds. Faster than the tram on a good day. Coffee?',
-          'A full minute. Properly thorough of you. Coffee?',
-          'Ninety seconds. This is a visit now, not a drive-by. Coffee?',
+          'Straight to the bottom. No scroll depth, no story. Coffee?',
+          'Thirty seconds. Faster than a review that agrees. Coffee?',
+          'A full minute. Longer than most people look at a grid. Coffee?',
+          'Ninety seconds. Somebody is reading the kerning. Coffee?',
           'Two minutes. The bounce rate just bounced back. Coffee?',
-          'Two and a half. I am flattered. Do go on. Coffee?',
-          'Three minutes. You have read more of this than I have. Coffee?',
+          'Two and a half. That is a whole sprint ceremony. Coffee?',
+          'Three minutes. Enough for a handoff nobody opens. Coffee?',
           'Three and a half. The kettle is already on. Coffee?',
           'Four minutes. Longer than a Gothenburg summer. Coffee?',
           'Four and a half. You are committed. I respect it. Coffee?',
-          'Five minutes. Officially a review. Verdict: needs coffee?',
+          'Five minutes. Officially a crit. Verdict: needs coffee?',
           'Six minutes. Every pixel seen twice. They are getting shy. Coffee?',
           'Seven minutes. Are we colleagues now? I take mine black. Coffee?',
-          'Eight minutes. The invoice writes itself. Payable in fika. Coffee?',
-          'Nine minutes. This is a hangout. Bring an umbrella, it rains here. Coffee?',
+          'Eight minutes. Long enough to name a token, not to agree on it. Coffee?',
+          'Nine minutes. Bring an umbrella. It rains here, on brand. Coffee?',
           'Ten minutes. You have outlasted the Gothenburg sunshine. Coffee?',
-          'Fifteen minutes. Genuinely, hello. Are you well? Coffee?',
-          'Twenty minutes. The blobs know your name. You are a regular. Coffee?',
-          'Twenty-five. You have outlasted my attention span by twenty-four. Coffee?',
+          'Fifteen. Genuinely, hello. Contrast on you: excellent. Coffee?',
+          'Twenty. The blobs know your name. You are a regular. Coffee?',
+          'Twenty-five. A whole workshop, and nobody opened the template. Coffee?',
           'Half an hour. Around here that is two separate weathers. Coffee?',
           'Thirty-five. The mug stopped counting. It is only ceramic. Coffee?',
-          'Forty minutes. You are in the credits now. Special thanks. Coffee?',
-          'Forty-five. First half done. Glenn would be proud. Coffee?',
+          'Forty. You are in the credits now. Special thanks, no equity. Coffee?',
+          'Forty-five. First half done. No goals, no fika. Coffee?',
           'Fifty minutes. Blink twice if you need water. Or milk. Coffee?',
           'Fifty-five. This tab is furniture now. Rent is one coffee?',
           'One hour. Personal best for both of us. No medal, only coffee?',
           'Sixty-five minutes. Be honest, did you leave the tab open? Coffee?',
-          'Seventy minutes. I hope this is on the clock. Bill them for the coffee?',
+          'Seventy minutes. I hope this is billable. Bill them for the coffee?',
           'Seventy-five. Sincerely: touch grass. It is wet, mind you. Coffee?',
           'Eighty minutes. The steam is decorative, sorry. The coffee would not be?',
           'Eighty-five. I am running out of jokes. That is a first. Coffee?',
-          'Ninety minutes. Full time, nobody scored. Coffee?',
+          'Ninety minutes. Full time, nobody scored, kerning still off. Coffee?',
           'Ninety-five. Extra time, and still no fika. Coffee?',
           'Over an hour and a half. Let us get actual coffee. I am buying.'
         ];
@@ -1380,6 +1389,11 @@ class Component extends DCLogic {
         ? { tl: r.left, tw: r.width, cr, fy: (kr.top + kr.height / 2 - cr.top) / cr.height }
         : null;
     }
+    // Capture the pointer on the track itself: without it a touch that drifts vertically
+    // is handed to the scroller mid-drag (pointercancel, no pointerup) and the handle
+    // stops following the finger. The pad above the track is a real overlay with its own
+    // touch-action, so the whole 38px band is grabbable, not just the 8px strip.
+    try { tr.setPointerCapture(e.pointerId); } catch(err){}
     let px = e.clientX, raf = 0;
     // applyHue() rewrites filters on a dozen elements; running it per pointermove
     // saturated the main thread on mobile, so the handle trailed the finger by several
@@ -1397,8 +1411,10 @@ class Component extends DCLogic {
       if(raf) cancelAnimationFrame(raf);
       this._trackW = 0; this._trackWF = 0; this._dragGeo = null; this._knobM = null;
       window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up);
+      window.removeEventListener('pointercancel', up);
     };
     window.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
+    window.addEventListener('pointercancel', up);
     e.preventDefault();
   }
   flipTile(tile, oldChar, newChar){
@@ -2046,28 +2062,28 @@ class Component extends DCLogic {
   }
   popLine(n){
     const m = {
-      1: 'Another one? Bold choice',
-      2: 'That was your last clean cup',
-      3: 'The barista just noticed',
-      4: 'The barista is watching you',
-      5: 'Five cups. Barista is calling for backup',
-      6: 'You are on a first-name basis with the barista',
-      7: 'This is a lifestyle, not an accident',
-      8: 'Still going. The barista is taking notes',
+      1: 'Another one? Bold. 900 bold',
+      2: 'Second cup. Second draft',
+      3: 'Third round. Same as the feedback',
+      4: 'Four. The barista is tracking your velocity',
+      5: 'Five cups. Sprint goal met',
+      6: 'First-name basis with the barista',
+      7: 'This is a lifestyle, not a backlog',
+      8: 'Eight. The barista is taking notes for the retro',
       9: 'Nine. The barista hid the good mugs',
       10: 'Ten cups. Free refill, zero regrets',
-      12: 'A dozen. Even the barista is impressed',
-      15: 'The dishwasher filed a complaint',
+      12: 'A dozen. Enough for a design system',
+      15: 'The dishwasher filed a ticket',
       18: 'IKEA sends its regards',
       20: 'Twenty. The barista knows your order by heart',
       25: 'A quarter century of chaos',
-      30: 'Thirty. Porcelain budget: gone',
-      33: 'A third of the way to legendary',
+      30: 'Thirty. Porcelain budget: descoped',
+      33: 'Ceramic debt is real',
       40: 'Forty. The barista named a drink after you',
       42: 'The answer to life, apparently',
-      50: 'Halfway to a hundred. No off switch found',
+      50: 'Halfway to a hundred. No off switch in the spec',
       55: 'Your insurance agent called. Twice',
-      60: 'Sixty. The barista started a tally on the wall',
+      60: 'Sixty. A tally on the wall, a token on the mug',
       66: 'Cups: 66. Dignity: 0',
       70: 'Seventy. The barista is proud, mostly concerned',
       75: 'Three quarters there. Still no chill',
