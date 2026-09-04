@@ -146,13 +146,8 @@
 <div style="position:fixed; inset:0; z-index:99999; background:#05060a; color:#f6f5f2; font-family:'Archivo', Helvetica, Arial, sans-serif; display:flex; flex-direction:column; justify-content:center; gap:clamp(20px,3vh,32px); padding:clamp(24px,6vw,90px)">
   <span style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.45">Private</span>
   <h1 style="margin:0; font-weight:700; font-size:clamp(34px,7vw,92px); line-height:.95; letter-spacing:-.035em; text-transform:uppercase; transform:skewX(-7deg); max-width:18ch; text-wrap:pretty">This one is<br />by invitation</h1>
-  <p style="margin:0; max-width:46ch; font-size:clamp(13px,1.3vw,16px); line-height:1.6; opacity:.65; text-wrap:pretty">Enter the code you were given and the site opens up. If you were not given one, drop me a line and I will hand it over.</p>
-  <p style="margin:0; max-width:46ch; font-size:clamp(12px,1.15vw,14px); line-height:1.6; opacity:.42; text-wrap:pretty">The work behind this is shared in confidence. By entering it you agree to keep it to yourself. No forwarding, no sharing screens, screenshots or files outside the conversation we are having.</p>
-  <div ref="{{ gateRowRef }}" style="display:flex; flex-wrap:wrap; align-items:center; gap:clamp(10px,1.4vw,16px)">
-    <input ref="{{ gateInputRef }}" onKeyDown="{{ onGateKey }}" type="password" inputmode="numeric" autocomplete="off" aria-label="Access code" placeholder="Code" style="width:min(60vw,220px); background:transparent; border:0; border-bottom:1px solid rgba(246,245,242,.35); color:#f6f5f2; font-family:'Archivo', Helvetica, Arial, sans-serif; font-size:clamp(18px,2.4vw,28px); font-weight:500; letter-spacing:.22em; padding:8px 2px; outline:none" />
-    <button type="button" onClick="{{ tryGate }}" style="background:transparent; border:1px solid rgba(246,245,242,.35); color:#f6f5f2; font-family:'Archivo', Helvetica, Arial, sans-serif; font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; padding:12px 20px; cursor:pointer; transition:background .2s ease, color .2s ease" style-hover="background:#f6f5f2; color:#05060a">Enter</button>
-  </div>
-  <span ref="{{ gateMsgRef }}" style="font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:0; min-height:1.4em">Not quite</span>
+  <p style="margin:0; max-width:46ch; font-size:clamp(12px,1.15vw,14px); line-height:1.6; opacity:.42; text-wrap:pretty">The work behind this is shared in confidence. By entering you agree to keep it to yourself. No forwarding, no sharing screens, screenshots or files outside the conversation we are having.</p>
+  <button type="button" onClick="{{ tryGate }}" style="align-self:flex-start; background:transparent; border:1px solid rgba(246,245,242,.35); color:#f6f5f2; font-family:'Archivo', Helvetica, Arial, sans-serif; font-size:clamp(20px,2.1vw,24px); font-weight:500; letter-spacing:.18em; text-transform:uppercase; padding:24px 40px; cursor:pointer; transition:background .2s ease, color .2s ease" style-hover="background:#f6f5f2; color:#05060a">Enter</button>
   <a href="mailto:hello@rikardrohr.com" style="align-self:flex-start; margin-top:clamp(12px,2vh,24px); color:#f6f5f2; font-size:clamp(10px,1.05vw,12px); letter-spacing:.18em; text-transform:uppercase; opacity:.5; transition:opacity .2s ease" style-hover="opacity:1">hello@rikardrohr.com</a>
 </div>
 </sc-if>
@@ -840,7 +835,7 @@ class Component extends DCLogic {
     this.operaFirstRef = React.createRef();
     this.emailRef = React.createRef();
     this.gateInputRef = React.createRef(); this.gateMsgRef = React.createRef(); this.gateRowRef = React.createRef();
-    this.state = Object.assign({}, this.state, { locked: (() => { try { return localStorage.getItem('rr_pass_7331') !== '1'; } catch(e){ return true; } })() });
+    this.state = Object.assign({}, this.state, { locked: (() => { try { return localStorage.getItem('rr_seen_intro') !== '1'; } catch(e){ return true; } })() });
     this.accent6Ref = React.createRef(); this.accent7Ref = React.createRef(); this.accent8Ref = React.createRef(); this.accent9Ref = React.createRef(); this.accent10Ref = React.createRef(); this.accent11Ref = React.createRef();
     this.grabHintRef = React.createRef();
     this.mugTintRef = React.createRef();
@@ -998,17 +993,8 @@ class Component extends DCLogic {
     this.scrollY = 0;
   }
   tryGate(){
-    const el = this.gateInputRef.current, msg = this.gateMsgRef.current;
-    if(!el) return;
-    if(btoa('rr:' + el.value.trim()) === 'cnI6NzMzMQ=='){
-      try { localStorage.setItem('rr_pass_7331', '1'); } catch(e){}
-      this.setState({ locked: false });
-      return;
-    }
-    el.value = '';
-    if(msg){ msg.style.opacity = '.6'; }
-    const row = this.gateRowRef.current;
-    if(row) row.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(-9px)' }, { transform: 'translateX(8px)' }, { transform: 'translateX(-4px)' }, { transform: 'translateX(0)' }], { duration: 320, easing: 'ease-out' });
+    try { localStorage.setItem('rr_seen_intro', '1'); } catch(e){}
+    this.setState({ locked: false });
   }
   renderVals(){
     return { oil1Ref: this.oil1Ref, oil2Ref: this.oil2Ref, oil3Ref: this.oil3Ref, oil4Ref: this.oil4Ref,
